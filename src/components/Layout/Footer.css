@@ -1,0 +1,533 @@
+/* ==================== FOOTER STYLES ==================== */
+
+.footer {
+  background: var(--color-principal);
+  color: white;
+  margin-top: auto;
+}
+
+/* Age Banner */
+.footer-age-banner {
+  background: #1a0f0e;
+  padding: 1rem 0;
+}
+
+.age-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  font-size: 0.9rem;
+}
+
+.age-banner i {
+  color: #f0ad4e;
+  font-size: 1.25rem;
+}
+
+.age-banner p {
+  margin: 0;
+  text-align: center;
+}
+
+/* Trust Badges */
+.footer-badges {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2rem 0;
+}
+
+.badges-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.badge-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  text-align: left;
+}
+
+.badge-item i {
+  font-size: 2rem;
+  color: var(--color-secundario);
+}
+
+.badge-item strong {
+  display: block;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.badge-item span {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+/* Main Footer */
+.footer-main {
+  padding: 3rem 0;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr 1.2fr;
+  gap: 2rem;
+}
+
+.footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.75rem;
+  font-weight: 700;
+  font-family: 'Playfair Display', serif;
+  margin-bottom: 0.5rem;
+}
+
+.footer-logo i {
+  color: var(--color-secundario);
+}
+
+.footer-tagline {
+  opacity: 0.8;
+  margin-bottom: 1.5rem;
+}
+
+.contact-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.contact-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.contact-list i {
+  color: var(--color-secundario);
+  width: 20px;
+}
+
+.contact-list a {
+  color: white;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.contact-list a:hover {
+  color: var(--color-secundario);
+}
+
+/* Footer Links */
+.footer-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1.25rem;
+  position: relative;
+  padding-bottom: 0.75rem;
+}
+
+.footer-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  height: 2px;
+  background: var(--color-secundario);
+}
+
+.footer-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-list li {
+  margin-bottom: 0.5rem;
+}
+
+.footer-list a {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.footer-list a:hover {
+  color: var(--color-secundario);
+  transform: translateX(5px);
+}
+
+/* Newsletter */
+.footer-newsletter__text {
+  margin-bottom: 1rem;
+  opacity: 0.8;
+}
+
+.newsletter-form {
+  display: flex;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.newsletter-form input {
+  flex: 1;
+  padding: 0.75rem 1.25rem;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: white;
+}
+
+.newsletter-form input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.newsletter-form button {
+  padding: 0.75rem 1.25rem;
+  background: var(--color-secundario);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.newsletter-form button:hover {
+  background: var(--color-hover);
+}
+
+/* Social */
+.footer-social {
+  display: flex;
+  gap: 1rem;
+}
+
+.footer-social {
+  margin-top: 1.5rem;
+}
+
+.footer-social a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border-radius: 25px;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.footer-social a:hover {
+  background: var(--color-secundario);
+  transform: translateY(-3px);
+}
+
+/* Payment Methods */
+.footer-payments {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2rem 0;
+  text-align: center;
+}
+
+.payment-methods-title {
+  font-size: 0.9rem;
+  opacity: 0.7;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.payment-methods {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3rem;
+}
+
+.payment-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  pointer-events: none;
+}
+
+.payment-icon i {
+  font-size: 2.5rem;
+  color: var(--color-secundario);
+  opacity: 0.9;
+}
+
+.payment-icon span {
+  font-size: 0.85rem;
+  opacity: 0.7;
+  font-weight: 500;
+}
+
+/* Bottom Footer */
+.footer-bottom {
+  background: #1a0f0e;
+  padding: 1.25rem 0;
+}
+
+.footer-bottom__content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.footer-bottom p {
+  margin: 0;
+  font-size: 0.875rem;
+  opacity: 0.8;
+}
+
+.footer-disclaimer {
+  font-size: 0.75rem !important;
+  opacity: 0.6 !important;
+  font-style: italic;
+}
+
+.back-to-top {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: white;
+  text-decoration: none;
+  font-size: 0.875rem;
+  opacity: 0.8;
+  transition: all 0.3s ease;
+}
+
+.back-to-top:hover {
+  opacity: 1;
+  color: var(--color-secundario);
+}
+
+/* ==================== RESPONSIVE ==================== */
+
+/* Tablet Grande (hasta 1200px) */
+@media (max-width: 1200px) {
+  .footer-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+  
+  .badges-grid {
+    gap: 1.75rem;
+  }
+}
+
+/* Tablet (hasta 1024px) */
+@media (max-width: 1024px) {
+  .footer-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+}
+
+/* Tablet (hasta 992px) */
+@media (max-width: 992px) {
+  .footer-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+  
+  .footer-main {
+    padding: 2.5rem 0;
+  }
+  
+  .footer-col:first-child {
+    grid-column: 1 / -1;
+    text-align: center;
+  }
+  
+  .footer-col:first-child .contact-list {
+    justify-content: center;
+  }
+  
+  .footer-col:first-child .footer-social {
+    justify-content: center;
+  }
+}
+
+/* Tablet Portrait (hasta 768px) */
+@media (max-width: 768px) {
+  .age-banner {
+    font-size: 0.85rem;
+    gap: 0.75rem;
+  }
+  
+  .age-banner i {
+    font-size: 1.1rem;
+  }
+  
+  .footer-badges {
+    padding: 1.5rem 0;
+  }
+  
+  .badges-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .badge-item {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .badge-item i {
+    font-size: 1.75rem;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    text-align: center;
+  }
+  
+  .footer-main {
+    padding: 2rem 0;
+  }
+
+  .footer-title::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .footer-list a:hover {
+    transform: none;
+  }
+
+  .contact-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .footer-social {
+    justify-content: center;
+  }
+
+  .footer-bottom__content {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+}
+
+/* Móvil (hasta 576px) */
+@media (max-width: 576px) {
+  .footer-age-banner {
+    padding: 0.875rem 0;
+  }
+  
+  .age-banner {
+    flex-direction: column;
+    font-size: 0.8rem;
+    gap: 0.5rem;
+  }
+  
+  .footer-badges {
+    padding: 1.25rem 0;
+  }
+  
+  .badges-grid {
+    gap: 1.25rem;
+  }
+  
+  .badge-item i {
+    font-size: 1.5rem;
+  }
+  
+  .badge-item strong {
+    font-size: 0.95rem;
+  }
+  
+  .badge-item span {
+    font-size: 0.8rem;
+  }
+  
+  .footer-main {
+    padding: 1.75rem 0;
+  }
+  
+  .footer-grid {
+    gap: 1.75rem;
+  }
+  
+  .footer-logo {
+    font-size: 1.5rem;
+    justify-content: center;
+  }
+  
+  .footer-title {
+    font-size: 1.05rem;
+  }
+  
+  .footer-list a,
+  .contact-list li {
+    font-size: 0.9rem;
+  }
+  
+  .footer-social a {
+    width: 38px;
+    height: 38px;
+    font-size: 1rem;
+  }
+  
+  .footer-bottom {
+    padding: 1.25rem 0;
+  }
+  
+  .footer-bottom__content {
+    font-size: 0.85rem;
+  }
+  
+  .payment-methods {
+    gap: 0.625rem;
+  }
+  
+  .payment-methods i {
+    font-size: 1.75rem;
+  }
+}
+
+/* Móvil Pequeño (hasta 360px) */
+@media (max-width: 360px) {
+  .footer-logo {
+    font-size: 1.35rem;
+  }
+  
+  .footer-title {
+    font-size: 1rem;
+  }
+  
+  .footer-list a,
+  .contact-list li {
+    font-size: 0.85rem;
+  }
+  
+  .footer-social a {
+    width: 35px;
+    height: 35px;
+    font-size: 0.95rem;
+  }
+  
+  .payment-methods i {
+    font-size: 1.5rem;
+  }
+}

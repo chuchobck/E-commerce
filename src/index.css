@@ -1,0 +1,106 @@
+/* ==================== GLOBAL RESET & BASE STYLES ==================== */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  /* Mejora el renderizado de fuentes en diferentes dispositivos */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Previene zoom automático en iOS cuando se seleccionan inputs */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  /* WCAG 2.2 - Scroll behavior suave pero respetar preferencias */
+  scroll-behavior: smooth;
+}
+
+/* WCAG 2.3.3 - Respetar preferencia de movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Mejora el scroll en dispositivos móviles */
+  -webkit-overflow-scrolling: touch;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* ==================== RESPONSIVE UTILITIES ==================== */
+
+/* Touch-friendly targets - mínimo 44x44px (Apple HIG) */
+button,
+a,
+input,
+select,
+textarea {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Previene zoom en inputs en iOS */
+@media screen and (max-width: 576px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="password"],
+  input[type="number"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Imágenes responsivas por defecto */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Clases de utilidad para ocultar en diferentes tamaños */
+.hidden-mobile {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .hidden-mobile {
+    display: block;
+  }
+  .hidden-desktop {
+    display: none;
+  }
+}
+
+/* Mejora el tap en dispositivos táctiles */
+a, button {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Evita overflow horizontal en móviles */
+body {
+  overflow-x: hidden;
+}

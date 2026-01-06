@@ -1,0 +1,756 @@
+/* ==================== PROMOCIONES PAGE STYLES ==================== */
+
+/* ==================== HERO BANNER ==================== */
+.promo-hero {
+  background: linear-gradient(135deg, var(--color-principal) 0%, var(--color-secundario) 100%);
+  color: white;
+  padding: 80px 20px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.promo-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></svg>');
+  background-size: 30px 30px;
+  opacity: 0.2;
+}
+
+.promo-hero__content {
+  position: relative;
+  z-index: 1;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.promo-hero__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 8px 20px;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  animation: pulse-badge 2s infinite;
+}
+
+@keyframes pulse-badge {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.promo-hero__title {
+  font-family: 'Playfair Display', serif;
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.promo-hero__subtitle {
+  font-size: 1.2rem;
+  opacity: 0.95;
+}
+
+/* ==================== SECCIÓN DE OCASIONES ==================== */
+.occasions-section {
+  padding: 60px 20px;
+  background: var(--color-fondo-navbar);
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.section-header__title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem;
+  color: var(--color-principal);
+  margin-bottom: 10px;
+}
+
+.section-header__subtitle {
+  font-size: 1.1rem;
+  color: var(--color-texto-secundario);
+}
+
+.occasions-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 25px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.occasion-card {
+  background: white;
+  border: 2px solid var(--color-borde);
+  border-radius: 16px;
+  padding: 30px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.occasion-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  border-color: var(--color-principal);
+}
+
+.occasion-card.active {
+  background: linear-gradient(135deg, var(--color-principal), var(--color-secundario));
+  color: white;
+  border-color: transparent;
+  transform: translateY(-8px);
+  box-shadow: 0 8px 25px rgba(199, 80, 64, 0.3);
+}
+
+.occasion-card__icon {
+  font-size: 3rem;
+  margin-bottom: 15px;
+  transition: transform 0.3s ease;
+  color: var(--color-secundario);
+}
+
+.occasion-card.active .occasion-card__icon {
+  color: white;
+  animation: shake 0.5s;
+}
+
+.occasion-card:hover .occasion-card__icon {
+  transform: scale(1.15) rotate(5deg);
+}
+
+@keyframes shake {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-10deg); }
+  75% { transform: rotate(10deg); }
+}
+
+.occasion-card__title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--color-principal);
+}
+
+.occasion-card.active .occasion-card__title {
+  color: white;
+}
+
+.occasion-card__count {
+  font-size: 0.95rem;
+  color: var(--color-texto-secundario);
+}
+
+.occasion-card.active .occasion-card__count {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* ==================== BANNER COUNTDOWN ==================== */
+.countdown-banner {
+  background: linear-gradient(135deg, #d32f2f, #c62828);
+  color: white;
+  padding: 40px 20px;
+  text-align: center;
+  margin: 0;
+}
+
+.countdown-banner__content {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.countdown-banner__title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+}
+
+.countdown-banner__title i {
+  color: #FFD700;
+  animation: ring 2s infinite;
+}
+
+@keyframes ring {
+  0%, 100% { transform: rotate(0); }
+  10%, 30% { transform: rotate(-10deg); }
+  20%, 40% { transform: rotate(10deg); }
+  50% { transform: rotate(0); }
+}
+
+.countdown {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.countdown__item {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 15px 25px;
+  min-width: 90px;
+  backdrop-filter: blur(5px);
+}
+
+.countdown__number {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #FFD700;
+  display: block;
+}
+
+.countdown__label {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.8);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ==================== SECCIÓN DE PROMOCIONES ==================== */
+.promos-section {
+  padding: 60px 20px;
+  background: var(--color-fondo-navbar);
+}
+
+.promos-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.promos-header__title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  color: var(--color-principal);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.promos-header__title i {
+  color: var(--color-secundario);
+}
+
+.promos-header__filters {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.price-filter {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.price-input {
+  width: 80px;
+  padding: 8px 12px;
+  border: 2px solid var(--color-borde);
+  border-radius: 20px;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.price-input:focus {
+  outline: none;
+  border-color: var(--color-principal);
+}
+
+.price-separator {
+  color: var(--color-principal);
+  font-weight: bold;
+}
+
+.price-filter-section {
+  margin: 20px 0;
+  padding: 20px;
+  background: var(--color-fondo-navbar);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.price-filter-title {
+  color: var(--color-principal);
+  font-size: 1.1rem;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.price-filter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.apply-filter-btn {
+  padding: 10px 20px;
+  background: var(--color-secundario);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.apply-filter-btn:hover {
+  background: var(--color-principal);
+  transform: translateY(-2px);
+}
+
+.filter-btn {
+  padding: 10px 20px;
+  border: 2px solid var(--color-borde);
+  background: white;
+  color: var(--color-principal);
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+  border-color: var(--color-principal);
+  color: var(--color-secundario);
+  transform: translateY(-2px);
+}
+
+.filter-btn.active {
+  background: var(--color-secundario);
+  color: white;
+  border-color: var(--color-secundario);
+}
+
+.promos-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.promos-loading {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--color-texto-secundario);
+}
+
+.promos-loading i {
+  font-size: 3rem;
+  color: var(--color-secundario);
+  margin-bottom: 15px;
+}
+
+/* ==================== PROMO PACK CARDS ==================== */
+.promo-pack {
+  background: white;
+  border: 1px solid var(--color-borde);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  position: relative;
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeInUp 0.5s ease forwards;
+}
+
+.promo-pack:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+
+.promo-pack__badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: #d32f2f;
+  color: white;
+  padding: 8px 15px;
+  border-radius: 25px;
+  font-weight: 700;
+  font-size: 1rem;
+  z-index: 2;
+  box-shadow: 0 4px 10px rgba(211, 47, 47, 0.4);
+}
+
+.promo-pack__envio-gratis {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: #4CAF50;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.promo-pack__image {
+  background: linear-gradient(135deg, rgba(199, 80, 64, 0.1), rgba(42, 23, 22, 0.05));
+  padding: 40px 20px;
+  text-align: center;
+  position: relative;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.promo-pack__products {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.promo-pack__product-icon {
+  width: 70px;
+  height: 70px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: var(--color-secundario);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  overflow: hidden;
+}
+
+.promo-pack__product-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.promo-pack__product-icon .hidden {
+  display: none;
+}
+
+.promo-pack:hover .promo-pack__product-icon {
+  transform: translateY(-5px);
+}
+
+.promo-pack__body {
+  padding: 25px;
+}
+
+.promo-pack__occasion {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-secundario);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+
+.promo-pack__title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  color: var(--color-principal);
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.promo-pack__desc {
+  color: var(--color-texto-secundario);
+  margin-bottom: 20px;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.promo-pack__includes {
+  background: var(--color-fondo-navbar);
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.promo-pack__includes-title {
+  font-weight: 600;
+  color: var(--color-principal);
+  margin-bottom: 10px;
+  font-size: 0.95rem;
+}
+
+.promo-pack__includes-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.promo-pack__includes-list li {
+  color: var(--color-texto-secundario);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+}
+
+.promo-pack__includes-list i {
+  color: #4CAF50;
+  font-size: 0.8rem;
+}
+
+.regalo-tag {
+  margin-left: 8px;
+  font-size: 0.75rem;
+  background: #FFD700;
+  color: #333;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.origen-flag {
+  margin-left: 8px;
+  font-size: 0.9rem;
+}
+
+.promo-pack__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-borde);
+}
+
+.promo-pack__prices {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.promo-pack__price-old {
+  color: var(--color-texto-secundario);
+  text-decoration: line-through;
+  font-size: 0.95rem;
+}
+
+.promo-pack__price-new {
+  color: var(--color-secundario);
+  font-size: 1.8rem;
+  font-weight: 700;
+  font-family: 'Playfair Display', serif;
+}
+
+.promo-pack__btn {
+  padding: 12px 25px;
+  background: var(--color-secundario);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.promo-pack__btn:hover {
+  background: var(--color-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(199, 80, 64, 0.3);
+}
+
+.promo-pack__btn.added {
+  background: #4CAF50;
+}
+
+.promo-pack__btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Estado vacío */
+.promos-empty {
+  text-align: center;
+  padding: 60px 20px;
+  display: none;
+}
+
+.promos-empty.show {
+  display: block;
+}
+
+.promos-empty__icon {
+  font-size: 4rem;
+  color: var(--color-texto-secundario);
+  margin-bottom: 20px;
+}
+
+.promos-empty__title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  color: var(--color-principal);
+  margin-bottom: 10px;
+}
+
+.promos-empty__text {
+  color: var(--color-texto-secundario);
+}
+
+/* Animación de entrada */
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 1200px) {
+  .promos-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 992px) {
+  .occasions-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+  }
+
+  .occasion-card {
+    padding: 20px 15px;
+  }
+
+  .occasion-card__icon {
+    font-size: 2rem;
+  }
+
+  .occasion-card__title {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .promo-hero__title {
+    font-size: 2rem;
+  }
+
+  .promo-hero__subtitle {
+    font-size: 1rem;
+  }
+
+  .occasions-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .promos-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .promos-header__filters {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .countdown-banner__title {
+    font-size: 1.5rem;
+    flex-direction: column;
+  }
+
+  .countdown__item {
+    min-width: 70px;
+    padding: 12px 15px;
+  }
+
+  .countdown__number {
+    font-size: 2rem;
+  }
+
+  .promos-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+@media (max-width: 576px) {
+  .promo-hero {
+    padding: 50px 15px;
+  }
+
+  .promo-hero__title {
+    font-size: 1.75rem;
+  }
+
+  .occasions-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .occasion-card {
+    padding: 15px 10px;
+  }
+
+  .occasion-card__icon {
+    font-size: 1.75rem;
+    margin-bottom: 10px;
+  }
+
+  .occasion-card__title {
+    font-size: 0.9rem;
+  }
+
+  .occasion-card__count {
+    font-size: 0.8rem;
+  }
+
+  .section-header__title {
+    font-size: 1.5rem;
+  }
+
+  .promos-header__title {
+    font-size: 1.5rem;
+  }
+
+  .promo-pack__footer {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+
+  .promo-pack__btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

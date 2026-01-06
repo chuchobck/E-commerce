@@ -1,0 +1,336 @@
+/* NotFoundPage.css - Estilos para página 404 */
+
+.not-found-page {
+  min-height: calc(100vh - 200px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.not-found-container {
+  max-width: 800px;
+  width: 100%;
+  text-align: center;
+}
+
+/* Animación del código 404 */
+.not-found-animation {
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.error-code {
+  font-size: 10rem;
+  font-weight: 900;
+  color: #c9a227;
+  text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.1);
+  line-height: 1;
+  opacity: 0.3;
+  animation: float 3s ease-in-out infinite;
+}
+
+.beer-bottles {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: -4rem;
+  font-size: 3rem;
+  position: relative;
+  z-index: 2;
+}
+
+.beer-bottles i {
+  color: #c9a227;
+  animation: wobble 2s ease-in-out infinite;
+}
+
+.beer-bottles i:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.beer-bottles i:nth-child(2) {
+  animation-delay: 0.3s;
+}
+
+.beer-bottles i:nth-child(3) {
+  animation-delay: 0.6s;
+}
+
+/* Contenido principal */
+.not-found-content {
+  background: white;
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.not-found-title {
+  font-size: 2rem;
+  color: #2d3436;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.not-found-title i {
+  color: #c9a227;
+}
+
+.not-found-message {
+  font-size: 1.2rem;
+  color: #6c757d;
+  margin-bottom: 2rem;
+}
+
+/* Sugerencias */
+.not-found-suggestions {
+  text-align: left;
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.not-found-suggestions h3 {
+  color: #2d3436;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.not-found-suggestions h3 i {
+  color: #ffc107;
+}
+
+.not-found-suggestions ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.not-found-suggestions li {
+  padding: 0.5rem 0;
+  color: #495057;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.not-found-suggestions li i {
+  color: #28a745;
+  font-size: 0.9rem;
+}
+
+/* Botones de acción */
+.not-found-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.not-found-actions .btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn-secondary {
+  background: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background: #5a6268;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+}
+
+.btn-primary {
+  background: #2d3436;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #1e272e;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(45, 52, 54, 0.3);
+}
+
+.btn-gold {
+  background: linear-gradient(135deg, #c9a227 0%, #daa520 100%);
+  color: white;
+}
+
+.btn-gold:hover {
+  background: linear-gradient(135deg, #b8911f 0%, #c9941e 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(201, 162, 39, 0.4);
+}
+
+/* Ayuda */
+.not-found-help {
+  padding: 1rem;
+  background: rgba(201, 162, 39, 0.1);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: #495057;
+}
+
+.not-found-help i {
+  color: #c9a227;
+  margin-right: 0.5rem;
+}
+
+.not-found-help a {
+  color: #c9a227;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.not-found-help a:hover {
+  text-decoration: underline;
+}
+
+/* Alternativas */
+.not-found-alternatives {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.not-found-alternatives h3 {
+  color: #2d3436;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.not-found-alternatives h3 i {
+  color: #dc3545;
+}
+
+.quick-links {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.quick-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #2d3436;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.quick-link:hover {
+  background: rgba(201, 162, 39, 0.1);
+  border-color: #c9a227;
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.quick-link i {
+  font-size: 2rem;
+  color: #c9a227;
+}
+
+.quick-link span {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+/* Animaciones */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes wobble {
+  0%, 100% {
+    transform: rotate(-5deg);
+  }
+  50% {
+    transform: rotate(5deg);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .error-code {
+    font-size: 6rem;
+  }
+
+  .beer-bottles {
+    font-size: 2rem;
+    margin-top: -3rem;
+    gap: 1rem;
+  }
+
+  .not-found-title {
+    font-size: 1.5rem;
+  }
+
+  .not-found-content {
+    padding: 1.5rem;
+  }
+
+  .not-found-actions {
+    flex-direction: column;
+  }
+
+  .not-found-actions .btn {
+    width: 100%;
+  }
+
+  .quick-links {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .error-code {
+    font-size: 4rem;
+  }
+
+  .not-found-title {
+    font-size: 1.25rem;
+  }
+
+  .not-found-message {
+    font-size: 1rem;
+  }
+
+  .quick-links {
+    grid-template-columns: 1fr;
+  }
+}

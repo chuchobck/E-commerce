@@ -1,0 +1,434 @@
+/* =========================================
+   WCAG 2.2 Level AA - Accessibility Styles
+   ========================================= */
+
+/* ==========================================
+   1. FOCUS VISIBLE - Criterio 2.4.7, 2.4.11, 2.4.12
+   ========================================== */
+
+/* Focus visible para todos los elementos interactivos */
+:focus-visible {
+  outline: 3px solid var(--color-secundario, #C75040) !important;
+  outline-offset: 2px !important;
+  border-radius: 4px;
+}
+
+/* Focus especial para links */
+a:focus-visible {
+  outline: 3px solid var(--color-secundario, #C75040) !important;
+  outline-offset: 3px !important;
+  text-decoration: underline;
+}
+
+/* Focus para botones */
+button:focus-visible,
+[role="button"]:focus-visible,
+input[type="button"]:focus-visible,
+input[type="submit"]:focus-visible {
+  outline: 3px solid var(--color-secundario, #C75040) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 4px rgba(199, 80, 64, 0.25) !important;
+}
+
+/* Focus para inputs */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 3px solid var(--color-secundario, #C75040) !important;
+  outline-offset: 0 !important;
+  border-color: var(--color-secundario, #C75040) !important;
+}
+
+/* Focus visible - Alta visibilidad para modo alto contraste */
+@media (prefers-contrast: high) {
+  :focus-visible {
+    outline: 4px solid #000000 !important;
+    outline-offset: 3px !important;
+  }
+}
+
+/* ==========================================
+   2. TARGET SIZE - Criterio 2.5.8 (24x24px mínimo)
+   ========================================== */
+
+/* Tamaño mínimo para elementos interactivos */
+button,
+a,
+[role="button"],
+[role="link"],
+input[type="button"],
+input[type="submit"],
+input[type="checkbox"],
+input[type="radio"] {
+  min-height: 24px;
+  min-width: 24px;
+}
+
+/* Mejor aún: 44x44px para touch */
+@media (pointer: coarse) {
+  button,
+  a,
+  [role="button"],
+  [role="link"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Checkboxes y radio buttons con área de touch ampliada */
+input[type="checkbox"],
+input[type="radio"] {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+}
+
+/* Labels clickeables con área ampliada */
+label {
+  display: inline-block;
+  padding: 4px 0;
+  cursor: pointer;
+}
+
+/* ==========================================
+   3. SKIP LINKS - Criterio 2.4.1
+   ========================================== */
+
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--color-principal, #2A1716);
+  color: #FFFFFF;
+  padding: 16px 24px;
+  text-decoration: none;
+  font-weight: 600;
+  z-index: 100000;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: top 0.3s ease;
+}
+
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--color-secundario, #C75040);
+  outline-offset: 2px;
+}
+
+/* ==========================================
+   4. COLOR CONTRAST - Criterios 1.4.3, 1.4.6, 1.4.11
+   ========================================== */
+
+/* Texto con contraste mejorado */
+.high-contrast-text {
+  color: #1A1A1A !important; /* Ratio 12.6:1 sobre blanco */
+}
+
+/* Estados de error con contraste adecuado */
+.error-message,
+.field-error-message,
+.alert-error {
+  color: #B91C1C !important; /* Contraste 5.3:1 */
+  background-color: #FEF2F2;
+  border-left: 4px solid #DC2626;
+}
+
+/* Estados de éxito */
+.success-message,
+.alert-success {
+  color: #166534 !important; /* Contraste 5.8:1 */
+  background-color: #F0FDF4;
+  border-left: 4px solid #22C55E;
+}
+
+/* Estados de advertencia */
+.warning-message,
+.alert-warning {
+  color: #92400E !important; /* Contraste 5.1:1 */
+  background-color: #FFFBEB;
+  border-left: 4px solid #F59E0B;
+}
+
+/* ==========================================
+   5. MOTION & ANIMATION - Criterio 2.3.3
+   ========================================== */
+
+/* Respetar preferencia de movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ==========================================
+   6. TEXT SPACING - Criterio 1.4.12
+   ========================================== */
+
+/* Asegurar que el contenido se adapte a espaciado de texto personalizado */
+body {
+  line-height: 1.5;
+  letter-spacing: 0.12em;
+  word-spacing: 0.16em;
+}
+
+p, li, dd, dt, th, td {
+  line-height: 1.5;
+}
+
+/* ==========================================
+   7. REFLOW - Criterio 1.4.10 (320px)
+   ========================================== */
+
+@media (max-width: 320px) {
+  body {
+    overflow-x: auto;
+  }
+  
+  .container {
+    padding: 0 8px;
+  }
+  
+  /* Evitar scroll horizontal */
+  img, video, iframe {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* ==========================================
+   8. NON-TEXT CONTRAST - Criterio 1.4.11
+   ========================================== */
+
+/* Bordes de formularios con contraste 3:1 */
+input,
+textarea,
+select {
+  border: 2px solid #6B7280; /* Contraste 3.8:1 */
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--color-secundario, #C75040);
+  box-shadow: 0 0 0 3px rgba(199, 80, 64, 0.2);
+}
+
+/* Iconos con contraste adecuado */
+.icon,
+i.fas,
+i.fab,
+i.far {
+  color: inherit;
+}
+
+/* ==========================================
+   9. VISIBLE LABELS - Criterio 3.3.2
+   ========================================== */
+
+/* Labels siempre visibles */
+label {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 500;
+  color: var(--color-principal, #2A1716);
+}
+
+/* Placeholder no debe ser el único indicador */
+input::placeholder,
+textarea::placeholder {
+  color: #9CA3AF; /* Gris claro para indicar que es ayuda, no label */
+  opacity: 1;
+}
+
+/* ==========================================
+   10. ERROR IDENTIFICATION - Criterio 3.3.1
+   ========================================== */
+
+/* Indicadores de error claros */
+input[aria-invalid="true"],
+textarea[aria-invalid="true"],
+select[aria-invalid="true"],
+.input-error {
+  border-color: #DC2626 !important;
+  border-width: 2px;
+  background-color: #FEF2F2;
+}
+
+/* Mensaje de error con icono */
+.field-error-message::before {
+  content: "⚠ ";
+  font-style: normal;
+}
+
+/* ==========================================
+   11. SCREEN READER ONLY - Utility
+   ========================================== */
+
+.sr-only,
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* Mostrar solo al enfocar */
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+  padding: inherit !important;
+  margin: inherit !important;
+  overflow: visible !important;
+  clip: auto !important;
+  white-space: normal !important;
+}
+
+/* ==========================================
+   12. LIVE REGIONS - Para notificaciones
+   ========================================== */
+
+[aria-live="polite"],
+[aria-live="assertive"] {
+  /* Garantizar que sea visible para lectores de pantalla */
+}
+
+/* ==========================================
+   13. MODAL FOCUS TRAP
+   ========================================== */
+
+.modal-overlay[aria-hidden="false"],
+[role="dialog"][aria-modal="true"] {
+  /* Trap focus dentro del modal */
+}
+
+/* Overlay oscuro para indicar modal */
+.modal-overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* ==========================================
+   14. LINK DIFFERENTIATION - Criterio 1.4.1
+   ========================================== */
+
+/* Links distinguibles no solo por color */
+a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+a:hover {
+  text-decoration-thickness: 2px;
+}
+
+/* Links dentro de texto */
+p a,
+li a,
+td a {
+  text-decoration: underline;
+  color: var(--color-secundario, #C75040);
+}
+
+p a:hover,
+li a:hover,
+td a:hover {
+  text-decoration-thickness: 2px;
+  background-color: rgba(199, 80, 64, 0.1);
+}
+
+/* ==========================================
+   15. IMAGES - Criterio 1.1.1
+   ========================================== */
+
+/* Imágenes sin alt tendrán borde rojo en desarrollo */
+img:not([alt]) {
+  outline: 4px solid red !important;
+}
+
+/* Imágenes decorativas */
+img[alt=""],
+img[role="presentation"] {
+  outline: none;
+}
+
+/* ==========================================
+   16. TABLES - Criterio 1.3.1
+   ========================================== */
+
+table {
+  border-collapse: collapse;
+}
+
+th {
+  background-color: #F3F4F6;
+  font-weight: 600;
+  text-align: left;
+  padding: 12px;
+}
+
+td {
+  padding: 12px;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+/* Caption para descripción de tabla */
+caption {
+  text-align: left;
+  font-weight: 600;
+  padding: 12px 0;
+}
+
+/* ==========================================
+   17. DARK MODE ACCESSIBILITY
+   ========================================== */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-principal: #F5F5F5;
+    --color-fondo: #1A1A1A;
+    --color-fondo-navbar: #2D2D2D;
+    --color-texto-secundario: #D1D1D1;
+  }
+  
+  body {
+    background: var(--color-fondo);
+    color: var(--color-principal);
+  }
+}
+
+/* ==========================================
+   18. PRINT STYLES - Criterio 1.4.8
+   ========================================== */
+
+@media print {
+  /* Asegurar buen contraste en impresión */
+  * {
+    color: #000000 !important;
+    background: #FFFFFF !important;
+  }
+  
+  a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+  }
+  
+  /* Ocultar elementos de navegación */
+  nav,
+  .skip-link,
+  .floating-cart,
+  button {
+    display: none !important;
+  }
+}

@@ -1,0 +1,372 @@
+/* HelpTooltip.css - Estilos para ayuda contextual */
+
+/* Wrapper del tooltip */
+.help-tooltip-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+/* Trigger por defecto (icono de ayuda) */
+.help-tooltip-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  color: #6c757d;
+  transition: color 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.help-tooltip-wrapper:hover .help-tooltip-trigger,
+.help-tooltip-wrapper:focus .help-tooltip-trigger {
+  color: #c9a227;
+}
+
+/* Tooltip principal */
+.help-tooltip {
+  position: absolute;
+  z-index: 1000;
+  background: #2d3436;
+  color: white;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  animation: tooltipFadeIn 0.2s ease-out;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+/* Posiciones */
+.help-tooltip--top {
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.help-tooltip--bottom {
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.help-tooltip--left {
+  right: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.help-tooltip--right {
+  left: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Flecha del tooltip */
+.help-tooltip__arrow {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border: 6px solid transparent;
+}
+
+.help-tooltip--top .help-tooltip__arrow {
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-top-color: #2d3436;
+}
+
+.help-tooltip--bottom .help-tooltip__arrow {
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-bottom-color: #2d3436;
+}
+
+.help-tooltip--left .help-tooltip__arrow {
+  right: -12px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-left-color: #2d3436;
+}
+
+.help-tooltip--right .help-tooltip__arrow {
+  left: -12px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-right-color: #2d3436;
+}
+
+/* Header del tooltip */
+.help-tooltip__header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(201, 162, 39, 0.2);
+  border-radius: 8px 8px 0 0;
+}
+
+.help-tooltip__header-icon {
+  color: #c9a227;
+  font-size: 1rem;
+}
+
+.help-tooltip__title {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* Contenido del tooltip */
+.help-tooltip__content {
+  padding: 0.75rem 1rem;
+}
+
+/* Link de saber más */
+.help-tooltip__learn-more {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  color: #c9a227;
+  text-decoration: none;
+  font-size: 0.8rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  transition: background 0.2s ease;
+}
+
+.help-tooltip__learn-more:hover {
+  background: rgba(201, 162, 39, 0.1);
+}
+
+/* Botón de cerrar */
+.help-tooltip__close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.help-tooltip__close:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+/* ====== Help Section ====== */
+.help-section {
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  overflow: hidden;
+}
+
+.help-section__header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 1rem;
+  background: #f8f9fa;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s ease;
+}
+
+.help-section__header:hover:not(:disabled) {
+  background: #e9ecef;
+}
+
+.help-section__header:disabled {
+  cursor: default;
+}
+
+.help-section__icon {
+  color: #c9a227;
+  font-size: 1.1rem;
+}
+
+.help-section__title {
+  flex: 1;
+  font-weight: 600;
+  color: #2d3436;
+  font-size: 0.95rem;
+}
+
+.help-section__arrow {
+  color: #6c757d;
+  font-size: 0.8rem;
+  transition: transform 0.3s ease;
+}
+
+.help-section__arrow--open {
+  transform: rotate(180deg);
+}
+
+.help-section__content {
+  padding: 1rem;
+  border-top: 1px solid #e9ecef;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #495057;
+  animation: sectionSlideDown 0.3s ease-out;
+}
+
+/* ====== FAQ ====== */
+.faq {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.faq__title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.25rem;
+  margin: 0;
+  background: linear-gradient(135deg, #2d3436 0%, #1e272e 100%);
+  color: white;
+  font-size: 1.1rem;
+}
+
+.faq__title i {
+  color: #c9a227;
+}
+
+.faq__list {
+  padding: 0.5rem;
+}
+
+.faq__item {
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  overflow: hidden;
+}
+
+.faq__item--open {
+  border-color: #c9a227;
+}
+
+.faq__question {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 1rem;
+  background: #f8f9fa;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #2d3436;
+  text-align: left;
+  transition: background 0.2s ease;
+}
+
+.faq__item--open .faq__question {
+  background: rgba(201, 162, 39, 0.1);
+  color: #c9a227;
+}
+
+.faq__question:hover {
+  background: #e9ecef;
+}
+
+.faq__arrow {
+  color: #6c757d;
+  font-size: 0.75rem;
+  transition: transform 0.3s ease;
+}
+
+.faq__arrow--open {
+  transform: rotate(180deg);
+  color: #c9a227;
+}
+
+.faq__answer {
+  padding: 1rem;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #495057;
+  background: white;
+  animation: faqSlideDown 0.3s ease-out;
+}
+
+/* Animaciones */
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes sectionSlideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 500px;
+  }
+}
+
+@keyframes faqSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .help-tooltip {
+    position: fixed;
+    bottom: 1rem;
+    left: 1rem;
+    right: 1rem;
+    max-width: none !important;
+    transform: none;
+    border-radius: 12px;
+  }
+
+  .help-tooltip--top,
+  .help-tooltip--bottom,
+  .help-tooltip--left,
+  .help-tooltip--right {
+    top: auto;
+    bottom: 1rem;
+    left: 1rem;
+    right: 1rem;
+    transform: none;
+  }
+
+  .help-tooltip__arrow {
+    display: none;
+  }
+}

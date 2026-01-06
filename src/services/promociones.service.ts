@@ -1,0 +1,144 @@
+// src/services/promociones.service.ts - Servicio para promociones
+import { api } from './api';
+
+export interface CategoriaPromocion {
+  id: number;
+  nombre: string;
+  descripcion?: string;
+  orden?: number;
+  totalOfertas: number;
+  icono?: string;
+}
+
+export interface ProductoPromocion {
+  id: number;
+  cantidad: number;
+  es_regalo: boolean;
+  producto: {
+    id_producto: string;
+    descripcion: string;
+    imagen_url?: string;
+    volumen?: number;
+    origen?: string;
+  };
+}
+
+export interface Promocion {
+  id: number;
+  nombre: string;
+  descripcion?: string;
+  descripcion_corta?: string;
+  marca?: string;
+  precio_original: number;
+  precio_promocional: number;
+  porcentaje_descuento: number;
+  cantidad_vendida?: number;
+  fecha_inicio: string;
+  fecha_fin: string;
+  activo: boolean;
+  destacado?: boolean;
+  envio_gratis?: boolean;
+  cantidad_maxima_cliente?: number;
+  stock_disponible: number;
+  mensaje_regalo?: string;
+  categoria_promocion: {
+    id: number;
+    nombre: string;
+  };
+  promocion_productos?: ProductoPromocion[];
+}
+
+export interface FiltrosPromocion {
+  categoria?: string;
+  ordenarPor?: 'destacado' | 'mayor-descuento' | 'menor-precio' | 'mas-vendidos' | 'fecha';
+  pagina?: number;
+  limite?: number;
+  soloActivas?: boolean;
+  minPrecio?: number;
+  maxPrecio?: number;
+}
+
+export interface RespuestaPromociones {
+  promociones: Promocion[];
+  total: number;
+  pagina: number;
+  totalPaginas: number;
+  limite: number;
+}
+
+export interface Countdown {
+  dias: number;
+  horas: number;
+  minutos: number;
+  segundos: number;
+  fechaObjetivo: string;
+}
+
+class PromocionesService {
+  // Obtener categorías de promoción (ocasiones)
+  async getCategorias(): Promise<CategoriaPromocion[]> {
+    try {
+      const response = await api.get('/promociones/categorias');
+      return response.data.data;
+    } catch (error) {
+      console.error('Error obteniendo categorías de promoción:', error);
+      throw error;
+    }
+  }
+
+  // Obtener promociones con filtros
+  async getPromociones(filtros: FiltrosPromocion = {}): Promise<RespuestaPromociones> {
+    try {
+      const params = new URLSearchParams();
+      
+      if (filtros.categoria) params.append('categoria', filtros.categoria);
+      if (filtros.ordenarPor) params.append('ordenarPor', filtros.ordenarPor);
+      if (filtros.pagina) params.append('pagina', filtros.pagina.toString());
+      if (filtros.limite) params.append('limite', filtros.limite.toString());
+      if (filtros.soloActivas !== undefined) params.append('soloActivas', filtros.soloActivas.toString());
+      if (filtros.minPrecio !== undefined) params.append('minPrecio', filtros.minPrecio.toString());
+      if (filtros.maxPrecio !== undefined) params.append('maxPrecio', filtros.maxPrecio.toString());
+
+      const response = await api.get(`/promociones?${params.toString()}`);
+      return response.data.data;
+    } catch (error) {
+      console.error('Error obteniendo promociones:', error);
+      throw error;
+    }
+  }
+
+  // Obtener promociones destacadas
+  async getPromocionesDestacadas(limite: number = 6): Promise<Promocion[]> {
+    try {
+      const response = await api.get(`/promociones/destacadas?limite=${limite}`);
+      return response.data.data;
+    } catch (error) {
+      console.error('Error obteniendo promociones destacadas:', error);
+      throw error;
+    }
+  }
+
+  // Obtener una promoción por ID
+  async getPromocion(id: number): Promise<Promocion> {
+    try {
+      const response = await api.get(`/promociones/${id}`);
+      return response.data.data;
+    } catch (error) {
+      console.error('Error obteniendo promoción:', error);
+      throw error;
+    }
+  }
+
+  // Obtener countdown de Navidad
+  async getCountdownNavidad(): Promise<Countdown> {
+    try {
+      const response = await api.get('/promociones/countdown/navidad');
+      return response.data.data;
+    } catch (error) {
+      console.error('Error obteniendo countdown:', error);
+      throw error;
+    }
+  }
+}
+
+export default new PromocionesService();
