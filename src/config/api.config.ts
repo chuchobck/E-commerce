@@ -1,20 +1,20 @@
-/**
- * Configuración de URLs para imágenes del backend
- * 
- * El backend sirve imágenes desde tres directorios:
- * - /logos → {API_URL}/logos/
- * - /productos → {API_URL}/productos/
- * - /promociones → {API_URL}/promociones/
+﻿/**
+ * CONFIGURACIÓN DE API PARA CREATE REACT APP
  */
 
-// Usar variable de entorno o localhost como fallback para desarrollo
-export const IMAGE_BASE_URL = process.env.REACT_APP_API_URL?.replace('/api/v1', '') || 'http://localhost:3000';
+// Obtener URL base de la API
+const getApiBaseUrl = (): string => {
+  const envUrl = process.env.REACT_APP_API_URL;
+  if (envUrl) {
+    return envUrl.replace('/api/v1', '');
+  }
+  return 'http://localhost:3000';
+};
 
-/**
- * Construye la URL completa de una imagen de producto
- * @param nombreArchivo - Nombre del archivo desde la BD (ej: "1.webp")
- * @returns URL completa (ej: "http://localhost:3000/productos/1.webp")
- */
+export const API_BASE_URL = getApiBaseUrl();
+export const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000/api/v1';
+export const IMAGE_BASE_URL = API_BASE_URL;
+
 export const getImagenProductoUrl = (nombreArchivo?: string | null): string => {
   if (!nombreArchivo) {
     return 'https://placehold.co/300?text=Sin+imagen';
@@ -22,11 +22,6 @@ export const getImagenProductoUrl = (nombreArchivo?: string | null): string => {
   return `${IMAGE_BASE_URL}/productos/${nombreArchivo}`;
 };
 
-/**
- * Construye la URL completa de un logo de marca
- * @param nombreArchivo - Nombre del archivo desde la BD (ej: "1.webp")
- * @returns URL completa (ej: "http://localhost:3000/logos/1.webp")
- */
 export const getLogoMarcaUrl = (nombreArchivo?: string | null): string => {
   if (!nombreArchivo) {
     return 'https://placehold.co/100?text=Sin+logo';
@@ -34,11 +29,6 @@ export const getLogoMarcaUrl = (nombreArchivo?: string | null): string => {
   return `${IMAGE_BASE_URL}/logos/${nombreArchivo}`;
 };
 
-/**
- * Construye la URL completa de una imagen de promoción
- * @param nombreArchivo - Nombre del archivo desde la BD (ej: "1.webp")
- * @returns URL completa (ej: "http://localhost:3000/promociones/1.webp")
- */
 export const getPromocionUrl = (nombreArchivo?: string | null): string => {
   if (!nombreArchivo) {
     return 'https://placehold.co/1200x400?text=Promoción';
@@ -46,10 +36,14 @@ export const getPromocionUrl = (nombreArchivo?: string | null): string => {
   return `${IMAGE_BASE_URL}/promociones/${nombreArchivo}`;
 };
 
-/**
- * Usa esto en un manejador de error de imagen
- * Ej: <img onError={(e) => { e.currentTarget.src = PLACEHOLDER_PRODUCTO; }} />
- */
 export const PLACEHOLDER_PRODUCTO = 'https://placehold.co/300?text=Sin+imagen';
 export const PLACEHOLDER_LOGO = 'https://placehold.co/100?text=Sin+logo';
 export const PLACEHOLDER_PROMOCION = 'https://placehold.co/1200x400?text=Promoción';
+
+if (process.env.NODE_ENV === 'development') {
+  console.log('🔧 API Configuration:', {
+    API_URL,
+    API_BASE_URL,
+    IMAGE_BASE_URL
+  });
+}
