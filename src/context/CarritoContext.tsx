@@ -110,28 +110,38 @@ export const CarritoProvider: React.FC<CarritoProviderProps> = ({ children, usua
         let carritoAPI = await carritoService.obtenerCarrito(usuarioId);
         console.log('🛒 Respuesta obtenerCarrito:', carritoAPI);
 
+        // Obtener items locales ANTES de cualquier operación
+        const itemsLocales = JSON.parse(localStorage.getItem(CARRITO_STORAGE_KEY) || '[]');
+        console.log('🛒 Items locales encontrados:', itemsLocales.length);
+
         if (!carritoAPI) {
           console.log('🛒 No hay carrito, creando uno nuevo...');
           carritoAPI = await carritoService.crearCarrito(usuarioId, 'WEB');
           console.log('🛒 Carrito creado:', carritoAPI);
-          setCarritoId(carritoAPI.id_carrito);
+        }
+        
+        setCarritoId(carritoAPI.id_carrito);
 
-          // Si hay items locales, sincronizarlos
-          const itemsLocales = JSON.parse(localStorage.getItem(CARRITO_STORAGE_KEY) || '[]');
-          if (itemsLocales.length > 0) {
-            console.log('🛒 Sincronizando items locales:', itemsLocales);
-            for (const item of itemsLocales) {
+        // ✅ SIEMPRE sincronizar items locales al carrito del servidor
+        if (itemsLocales.length > 0) {
+          console.log('🛒 Sincronizando items locales al servidor:', itemsLocales);
+          for (const item of itemsLocales) {
+            try {
               await carritoService.agregarProducto(
                 carritoAPI.id_carrito,
                 item.producto.id_producto,
                 item.cantidad,
                 Number(item.producto.precio_venta)
               );
+            } catch (err) {
+              console.warn('⚠️ Error agregando producto:', item.producto.id_producto, err);
             }
-            carritoAPI = await carritoService.obtenerCarrito(usuarioId);
           }
-        } else {
-          setCarritoId(carritoAPI.id_carrito);
+          // Limpiar localStorage después de sincronizar
+          localStorage.removeItem(CARRITO_STORAGE_KEY);
+          // Recargar carrito actualizado
+          carritoAPI = await carritoService.obtenerCarrito(usuarioId);
+          console.log('🛒 Carrito actualizado después de sincronizar:', carritoAPI);
         }
 
         if (carritoAPI) {
