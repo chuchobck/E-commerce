@@ -1,15 +1,14 @@
-import axios from 'axios';
+﻿import axios from 'axios';
+import { API_URL } from '../config/api.config';
 
-// Usar solo variable de entorno VITE_API_URL
-const API_BASE_URL = import.meta.env.VITE_API_URL;
-
+// Crear instancia de axios con URL desde config
 export const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
 });
-//
+
 // Interceptor para agregar token a todas las peticiones
 api.interceptors.request.use(
   (config) => {
@@ -29,7 +28,6 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Token inválido o expirado
       localStorage.removeItem('barbox_token');
       localStorage.removeItem('barbox_user');
       window.location.href = '/login';
