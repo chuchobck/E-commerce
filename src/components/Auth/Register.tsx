@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { 
   validarCedulaORUC, 
@@ -37,6 +37,10 @@ const Register: React.FC = () => {
 
   const { register } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Obtener la página de origen desde el state de location
+  const from = (location.state as any)?.from || '/';
 
   const validateField = (name: string, value: string): string | undefined => {
     switch (name) {
@@ -195,7 +199,7 @@ const Register: React.FC = () => {
       });
 
       console.log('✅ Registro exitoso, redirigiendo...');
-      navigate('/');
+      navigate(from, { replace: true });
     } catch (err: any) {
       console.error('❌ Error en registro:', err);
       console.error('❌ Response data:', err.response?.data);

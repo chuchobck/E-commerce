@@ -41,6 +41,50 @@ const CarritoPage: React.FC = () => {
   const [modalVaciar, setModalVaciar] = useState(false);
   const [modalEliminar, setModalEliminar] = useState<{show: boolean, id: string, nombre: string}>({ show: false, id: '', nombre: '' });
 
+  // ✅ Detectar intención de checkout después del login
+  useEffect(() => {
+    const intentoCheckout = localStorage.getItem('intentoCheckout');
+    if (intentoCheckout === 'true' && isAuthenticated && carritoId && items.length > 0) {
+      // Limpiar flag
+      localStorage.removeItem('intentoCheckout');
+      
+      // Crear pedido automáticamente y redirigir al checkout
+      const crearPedidoYRedirigir = async () => {
+        setIsCreatingPedido(true);
+        try {
+          const response = await crearPedido({
+            carritoId,
+            canal: 'WEB',
+          });
+          
+          const pedidoId = response.data.id_pedido;
+          console.log('✅ Pedido creado automáticamente después del login:', pedidoId);
+          
+          // Guardar datos del pedido para checkout
+          const pedidoData = {
+            id_pedido: pedidoId,
+            items: items,
+            total: totalPrecio,
+            fecha: new Date().toISOString(),
+          };
+          localStorage.setItem('pedidoActual', JSON.stringify(pedidoData));
+          
+          mostrarNotificacion('Redirigiendo al checkout...', 'success');
+          
+          // Ir a checkout
+          setTimeout(() => navigate('/checkout'), 800);
+        } catch (error: any) {
+          console.error('❌ Error creando pedido automático:', error);
+          const mensaje = error.response?.data?.message || 'Error al procesar el pedido';
+          mostrarNotificacion(mensaje, 'error');
+          setIsCreatingPedido(false);
+        }
+      };
+      
+      crearPedidoYRedirigir();
+    }
+  }, [isAuthenticated, carritoId, items, totalPrecio, navigate]);
+
   // Cargar productos recomendados
   useEffect(() => {
     const cargarRecomendados = async () => {
@@ -457,8 +501,10 @@ const CarritoPage: React.FC = () => {
                     onClick={async () => {
                       if (!isAuthenticated) {
                         mostrarNotificacion('Debes iniciar sesión para continuar', 'info');
+                        // Guardar intención de checkout para después del login
+                        localStorage.setItem('intentoCheckout', 'true');
                         setTimeout(() => {
-                          navigate('/login', { state: { from: '/carrito' } });
+                          navigate('/login', { state: { from: '/carrito', intentoCheckout: true } });
                         }, 1500);
                         return;
                       }
