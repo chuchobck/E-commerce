@@ -1,62 +1,72 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PayPalButtons } from '@paypal/react-paypal-js';
 import Header from '../components/Layout/Header';
 import Footer from '../components/Layout/Footer';
-import ConfirmModal from '../components/Common/ConfirmModal';
-import FormularioPagoTarjeta from '../components/Checkout/FormularioPagoTarjeta';
 import { useAuth } from '../context/AuthContext';
 import { useCarrito } from '../context/CarritoContext';
-import { crearPago, pagarConTarjeta } from '../services/pago.service';
-import { crearFactura } from '../services/factura.service';
+import { checkoutService } from '../services/checkout.service';
+import { PuntoRetiro, MetodoPago } from '../types/checkout.types';
 import './CheckoutPage.css';
-
-interface PedidoData {
-  id_pedido: string;
-  items: any[];
-  total: number;
-  fecha: string;
-}
 
 const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
-  const { user, isAuthenticated } = useAuth();
-  const { limpiarCarrito } = useCarrito();
+  const { isAuthenticated } = useAuth();
+  const { items, limpiarCarrito } = useCarrito();
   
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingData, setLoadingData] = useState(true);
   const [showAlert, setShowAlert] = useState(false);
   const [alertType, setAlertType] = useState<'success' | 'error'>('success');
   const [alertMessage, setAlertMessage] = useState('');
-  const [pedidoData, setPedidoData] = useState<PedidoData | null>(null);
-  const [showCancelModal, setShowCancelModal] = useState(false);
-  const [metodoSeleccionado, setMetodoSeleccionado] = useState<'PAYPAL' | 'TARJETA'>('PAYPAL');
-  const [sucursalSeleccionada, setSucursalSeleccionada] = useState('quito');
+  
+  const [puntosRetiro, setPuntosRetiro] = useState<PuntoRetiro[]>([]);
+  const [metodosPago, setMetodosPago] = useState<MetodoPago[]>([]);
+  const [puntoRetiroSeleccionado, setPuntoRetiroSeleccionado] = useState('');
+  const [metodoPagoSeleccionado, setMetodoPagoSeleccionado] = useState('');
 
-  // Lista de sucursales disponibles
-  const sucursales = [
-    { id: 'quito', nombre: 'Quito - Av. Amazonas y Naciones Unidas' },
-    { id: 'guayaquil', nombre: 'Guayaquil - Malecón 2000, Local 15' },
-    { id: 'cuenca', nombre: 'Cuenca - Av. Ordóñez Lasso 123' },
-  ];
+  const carritoId = localStorage.getItem('barbox_cart_id');
 
-  // Cargar pedido desde localStorage
+  // Verificar autenticación y carrito
   useEffect(() => {
     if (!isAuthenticated) {
-      navigate('/login', { state: { from: '/carrito' } });
+      navigate('/login', { state: { from: '/checkout' } });
       return;
     }
 
-    const pedidoGuardado = localStorage.getItem('pedidoActual');
-    if (!pedidoGuardado) {
-      console.warn('⚠️ No hay pedido activo, redirigiendo al carrito');
-      navigate('/carrito');
+    if (!carritoId || !items || items.length === 0) {
+      mostrarAlerta('No hay productos en el carrito', 'error');
+      setTimeout(() => navigate('/carrito'), 2000);
       return;
     }
 
-    const data = JSON.parse(pedidoGuardado) as PedidoData;
-    console.log('📦 Pedido cargado:', data);
-    setPedidoData(data);
-  }, [isAuthenticated, navigate]);
+    cargarDatosCheckout();
+  }, [isAuthenticated, carritoId, items, navigate]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const cargarDatosCheckout = async () => {
+    try {
+      setLoadingData(true);
+      const [puntosData, metodosData] = await Promise.all([
+        checkoutService.getPuntosRetiro(),
+        checkoutService.getMetodosPago()
+      ]);
+      
+      setPuntosRetiro(puntosData);
+      setMetodosPago(metodosData);
+      
+      // Seleccionar primer punto de retiro y método de pago por defecto
+      if (puntosData.length > 0) {
+        setPuntoRetiroSeleccionado(puntosData[0].id);
+      }
+      if (metodosData.length > 0) {
+        setMetodoPagoSeleccionado(metodosData[0].id);
+      }
+    } catch (error: any) {
+      console.error('Error cargando datos de checkout:', error);
+      mostrarAlerta('Error al cargar datos del checkout', 'error');
+    } finally {
+      setLoadingData(false);
+    }
+  };
 
   const mostrarAlerta = (mensaje: string, tipo: 'success' | 'error') => {
     setAlertMessage(mensaje);
@@ -65,17 +75,51 @@ const CheckoutPage: React.FC = () => {
     setTimeout(() => setShowAlert(false), 5000);
   };
 
-  const handleCancel = () => {
-    setShowCancelModal(true);
+  const handleConfirmarCompra = async () => {
+    if (!puntoRetiroSeleccionado) {
+      mostrarAlerta('Por favor selecciona un punto de retiro', 'error');
+      return;
+    }
+
+    if (!metodoPagoSeleccionado) {
+      mostrarAlerta('Por favor selecciona un método de pago', 'error');
+      return;
+    }
+
+    if (!carritoId) {
+      mostrarAlerta('Error: No se encontró el carrito', 'error');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const response = await checkoutService.procesarCheckout({
+        carrito_id: carritoId,
+        metodo_pago_id: metodoPagoSeleccionado,
+        sucursal_retiro_id: puntoRetiroSeleccionado,
+      });
+
+      if (response.status === 'success') {
+        mostrarAlerta('¡Compra realizada con éxito!', 'success');
+        limpiarCarrito();
+        
+        // Redirigir a página de confirmación después de 2 segundos
+        setTimeout(() => {
+          navigate('/confirmacion-pedido', {
+            state: { factura: response.data.factura }
+          });
+        }, 2000);
+      }
+    } catch (error: any) {
+      console.error('Error en checkout:', error);
+      const mensaje = error.response?.data?.message || 'Error al procesar la compra';
+      mostrarAlerta(mensaje, 'error');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const confirmarCancelacion = () => {
-    setShowCancelModal(false);
-    localStorage.removeItem('pedidoActual');
-    navigate('/carrito');
-  };
-
-  if (!pedidoData) {
+  if (loadingData) {
     return (
       <>
         <Header />
@@ -83,7 +127,7 @@ const CheckoutPage: React.FC = () => {
           <div className="container">
             <div className="loading-screen">
               <div className="spinner"></div>
-              <p>Cargando pedido...</p>
+              <p>Cargando datos del checkout...</p>
             </div>
           </div>
         </main>
@@ -91,6 +135,8 @@ const CheckoutPage: React.FC = () => {
       </>
     );
   }
+
+  const totalCarrito = items?.reduce((sum, item) => sum + item.subtotal, 0) || 0;
 
   return (
     <>
@@ -110,7 +156,7 @@ const CheckoutPage: React.FC = () => {
             </button>
             <h1 className="checkout-title">
               <i className="fas fa-credit-card"></i>
-              Confirmar Pago
+              Confirmar Compra
             </h1>
           </div>
 
@@ -121,14 +167,14 @@ const CheckoutPage: React.FC = () => {
               <span className="step-label">Carrito</span>
             </div>
             <div className="progress-line completed"></div>
-            <div className="progress-step completed">
-              <span className="step-number">2</span>
-              <span className="step-label">Pedido</span>
-            </div>
-            <div className="progress-line completed"></div>
             <div className="progress-step active">
+              <span className="step-number">2</span>
+              <span className="step-label">Checkout</span>
+            </div>
+            <div className="progress-line"></div>
+            <div className="progress-step">
               <span className="step-number">3</span>
-              <span className="step-label">Pago</span>
+              <span className="step-label">Confirmación</span>
             </div>
           </div>
 
@@ -141,353 +187,141 @@ const CheckoutPage: React.FC = () => {
           )}
 
           <div className="checkout-wrapper">
-            {/* Sección de Pago */}
+            {/* Sección de Checkout */}
             <div className="checkout-form">
+              
+              {/* Punto de Retiro */}
               <div className="form-section">
-                <h2><i className="fas fa-check-circle" style={{ color: '#4CAF50' }}></i> Pedido Creado</h2>
-                <div className="info-box-green">
-                  <p><strong>N° Pedido:</strong> {pedidoData.id_pedido}</p>
-                  <p><strong>Fecha:</strong> {new Date(pedidoData.fecha).toLocaleString('es-EC')}</p>
-                  <p style={{ marginTop: '10px', fontSize: '14px' }}>
-                    <i className="fas fa-info-circle"></i> Tu pedido ha sido creado. Completa el pago para finalizar tu compra.
-                  </p>
-                </div>
-              </div>
-
-              {/* Sección de Sucursal */}
-              <div className="form-section">
-                <h2><i className="fas fa-store"></i> Sucursal de Retiro</h2>
+                <h2><i className="fas fa-store"></i> Punto de Retiro</h2>
                 <p style={{ marginBottom: '15px', color: '#666', fontSize: '14px' }}>
-                  Selecciona la sucursal donde retirarás tu pedido:
+                  Selecciona dónde retirarás tu pedido:
                 </p>
-                <div className="sucursal-selector">
-                  {sucursales.map((sucursal) => (
-                    <label 
-                      key={sucursal.id} 
-                      className={`sucursal-option ${sucursalSeleccionada === sucursal.id ? 'selected' : ''}`}
-                    >
-                      <input
-                        type="radio"
-                        name="sucursal"
-                        value={sucursal.id}
-                        checked={sucursalSeleccionada === sucursal.id}
-                        onChange={(e) => setSucursalSeleccionada(e.target.value)}
-                      />
-                      <span className="sucursal-radio"></span>
-                      <span className="sucursal-info">
-                        <i className="fas fa-map-marker-alt"></i>
-                        {sucursal.nombre}
-                      </span>
-                    </label>
-                  ))}
+                <div className="punto-retiro-list">
+                  {puntosRetiro.length === 0 ? (
+                    <p>No hay puntos de retiro disponibles</p>
+                  ) : (
+                    puntosRetiro.map((punto) => (
+                      <label 
+                        key={punto.id} 
+                        className={`punto-retiro-option ${puntoRetiroSeleccionado === punto.id ? 'selected' : ''}`}
+                      >
+                        <input
+                          type="radio"
+                          name="puntoRetiro"
+                          value={punto.id}
+                          checked={puntoRetiroSeleccionado === punto.id}
+                          onChange={(e) => setPuntoRetiroSeleccionado(e.target.value)}
+                        />
+                        <span className="punto-radio"></span>
+                        <div className="punto-info">
+                          <strong>{punto.nombre}</strong>
+                          <p><i className="fas fa-map-marker-alt"></i> {punto.direccion}</p>
+                          <p><i className="fas fa-city"></i> {punto.ciudad.nombre}</p>
+                          {punto.horario && <p><i className="fas fa-clock"></i> {punto.horario}</p>}
+                          {punto.telefono && <p><i className="fas fa-phone"></i> {punto.telefono}</p>}
+                        </div>
+                      </label>
+                    ))
+                  )}
                 </div>
               </div>
 
+              {/* Método de Pago */}
               <div className="form-section">
-                {/* Tabs de métodos de pago */}
-                <div className="payment-tabs">
-                  <button
-                    className={`payment-tab ${metodoSeleccionado === 'PAYPAL' ? 'active' : ''}`}
-                    onClick={() => setMetodoSeleccionado('PAYPAL')}
-                  >
-                    <i className="fab fa-paypal"></i> PayPal
-                  </button>
-                  <button
-                    className={`payment-tab ${metodoSeleccionado === 'TARJETA' ? 'active' : ''}`}
-                    onClick={() => setMetodoSeleccionado('TARJETA')}
-                  >
-                    <i className="fas fa-credit-card"></i> Tarjeta de Crédito/Débito
-                  </button>
-                </div>
-
-                {/* Contenido según método seleccionado */}
-                {metodoSeleccionado === 'PAYPAL' ? (
-                  <div className="payment-content">
-                    <p style={{ marginBottom: '20px', color: '#666', textAlign: 'center' }}>
-                      Haz clic en el botón de PayPal para completar tu compra de forma segura.
-                    </p>
-                    
-                    <div style={{ maxWidth: '400px', margin: '0 auto' }}>
-                      <PayPalButtons
-                        style={{ layout: 'vertical', shape: 'rect', label: 'pay' }}
-                        disabled={isLoading}
-                        createOrder={(data, actions) => {
-                          return actions.order.create({
-                            intent: 'CAPTURE',
-                            purchase_units: [{
-                              amount: {
-                                currency_code: 'USD',
-                                value: pedidoData.total.toFixed(2),
-                              },
-                              description: `Pedido ${pedidoData.id_pedido} - BARBOX`,
-                            }],
-                          });
-                        }}
-                    onApprove={async (data, actions) => {
-                      setIsLoading(true);
-                      try {
-                        const details = await actions.order?.capture();
-                        const transactionId = details?.id;
-
-                        console.log('💳 Pago aprobado:', transactionId);
-
-                        // 1. Registrar el pago
-                        await crearPago({
-                          pedidoId: pedidoData.id_pedido,
-                          metodo: 'PAYPAL',
-                          monto: pedidoData.total,
-                          referencia: transactionId,
-                        });
-                        console.log('✅ Pago registrado');
-
-                        // 2. Crear factura usando el SP sp_factura_crear
-                        let facturaData = null;
-                        if (user?.cliente?.id_cliente) {
-                          const facturaResponse = await crearFactura({
-                            clienteId: user.cliente.id_cliente,
-                            canal: 'WEB',
-                            pedidoId: pedidoData.id_pedido,
-                          });
-                          facturaData = facturaResponse.data;
-                          console.log('📄 Factura creada:', facturaData);
-                        }
-
-                        // 3. Guardar datos para la página de confirmación
-                        const confirmacionData = {
-                          pedidoId: pedidoData.id_pedido,
-                          factura: facturaData,
-                          transaccion: transactionId,
-                          items: pedidoData.items,
-                          total: pedidoData.total,
-                          fecha: new Date().toISOString(),
-                          email: user?.email,
-                          sucursal: sucursalSeleccionada,
-                        };
-                        localStorage.setItem('confirmacionPago', JSON.stringify(confirmacionData));
-                        
-                        // Guardar también en formato antiguo para compatibilidad
-                        const pedidoConfirmado = {
-                          numero: pedidoData.id_pedido,
-                          fecha: pedidoData.fecha,
-                          usuario: user,
-                          datos: { email: user?.email, sucursal: sucursalSeleccionada },
-                          items: pedidoData.items,
-                          total: pedidoData.total,
-                        };
-                        localStorage.setItem('ultimoPedido', JSON.stringify(pedidoConfirmado));
-
-                        // 4. Limpiar datos temporales y forzar nuevo carrito
-                        localStorage.removeItem('pedidoActual');
-                        localStorage.removeItem('carritoId'); // 🔄 Ahora sí limpiar - pago confirmado
-                        await limpiarCarrito();
-
-                        // 5. Redirigir a confirmación
-                        mostrarAlerta('¡Pago exitoso! Redirigiendo...', 'success');
-                        setTimeout(() => {
-                          navigate(`/pedido-confirmado?pedido=${pedidoData.id_pedido}`, { replace: true });
-                        }, 1000);
-
-                      } catch (error: any) {
-                        console.error('❌ Error en post-pago:', error);
-                        const mensaje = error.response?.data?.message || 'Error procesando el pago. Contacte soporte.';
-                        
-                        // Si el error es que ya tiene factura, limpiar y redirigir
-                        if (mensaje.includes('factura')) {
-                          localStorage.removeItem('pedidoActual');
-                          localStorage.removeItem('barbox_carrito_id');
-                          localStorage.removeItem('barbox_carrito_id');
-                          localStorage.removeItem('carritoId');
-                          mostrarAlerta('Este pedido ya fue procesado. Redirigiendo al carrito...', 'error');
-                          setTimeout(() => {
-                            navigate('/carrito', { replace: true });
-                          }, 2000);
-                        } else {
-                          mostrarAlerta(mensaje, 'error');
-                        }
-                      } finally {
-                        setIsLoading(false);
-                      }
-                    }}
-                    onError={(err) => {
-                      console.error('❌ Error en PayPal:', err);
-                      mostrarAlerta('Error con PayPal. Intente nuevamente.', 'error');
-                    }}
-                    onCancel={() => {
-                      mostrarAlerta('Pago cancelado. Puedes intentarlo de nuevo.', 'error');
-                    }}
-                  />
-                    </div>
-                  </div>
-                ) : (
-                  <div className="payment-content">
-                    <FormularioPagoTarjeta
-                      monto={pedidoData.total}
-                      isLoading={isLoading}
-                      onPagar={async (datosTarjeta) => {
-                        setIsLoading(true);
-                        try {
-                          console.log('💳 Procesando pago con tarjeta...');
-
-                          // 1. Procesar pago con tarjeta
-                          const pagoResponse = await pagarConTarjeta({
-                            pedidoId: pedidoData.id_pedido,
-                            datosTarjeta
-                          });
-                          
-                          const { referencia, ultimosDigitos } = pagoResponse.data;
-                          console.log('✅ Pago con tarjeta aprobado:', referencia);
-
-                          // 2. Crear factura
-                          let facturaData = null;
-                          if (user?.cliente?.id_cliente) {
-                            const facturaResponse = await crearFactura({
-                              clienteId: user.cliente.id_cliente,
-                              canal: 'WEB',
-                              pedidoId: pedidoData.id_pedido,
-                            });
-                            facturaData = facturaResponse.data;
-                            console.log('📄 Factura creada:', facturaData);
-                          }
-
-                          // 3. Guardar datos para confirmación
-                          const confirmacionData = {
-                            pedidoId: pedidoData.id_pedido,
-                            factura: facturaData,
-                            transaccion: referencia,
-                            metodoPago: 'TARJETA',
-                            ultimosDigitos,
-                            items: pedidoData.items,
-                            total: pedidoData.total,
-                            fecha: new Date().toISOString(),
-                            email: user?.email,
-                            sucursal: sucursalSeleccionada,
-                          };
-                          localStorage.setItem('confirmacionPago', JSON.stringify(confirmacionData));
-                          
-                          const pedidoConfirmado = {
-                            numero: pedidoData.id_pedido,
-                            fecha: pedidoData.fecha,
-                            usuario: user,
-                            datos: { email: user?.email, sucursal: sucursalSeleccionada },
-                            items: pedidoData.items,
-                            total: pedidoData.total,
-                          };
-                          localStorage.setItem('ultimoPedido', JSON.stringify(pedidoConfirmado));
-
-                          // 4. Limpiar datos y forzar nuevo carrito
-                          localStorage.removeItem('pedidoActual');
-                          localStorage.removeItem('barbox_carrito_id');
-                          localStorage.removeItem('carritoId');
-                          await limpiarCarrito();
-
-                          // 5. Redirigir a confirmación
-                          mostrarAlerta('¡Pago exitoso! Redirigiendo...', 'success');
-                          setTimeout(() => {
-                            navigate(`/pedido-confirmado?pedido=${pedidoData.id_pedido}`, { replace: true });
-                          }, 1000);
-
-                        } catch (error: any) {
-                          console.error('❌ Error en pago con tarjeta:', error);
-                          const mensaje = error.response?.data?.message || 'Error procesando el pago. Intente nuevamente.';
-                          
-                          // Si el error es que ya tiene factura, limpiar y redirigir
-                          if (mensaje.includes('factura')) {
-                            localStorage.removeItem('pedidoActual');
-                            localStorage.removeItem('carritoId');
-                            mostrarAlerta('Este pedido ya fue procesado. Redirigiendo al carrito...', 'error');
-                            setTimeout(() => {
-                              navigate('/carrito', { replace: true });
-                            }, 2000);
-                          } else {
-                            mostrarAlerta(mensaje, 'error');
-                          }
-                        } finally {
-                          setIsLoading(false);
-                        }
-                      }}
-                    />
-                  </div>
-                )}
-
-                <div className="form-actions" style={{ marginTop: '30px' }}>
-                  <button 
-                    type="button" 
-                    onClick={handleCancel}
-                    className="btn btn--outline"
-                    disabled={isLoading}
-                  >
-                    <i className="fas fa-times"></i> Cancelar Compra
-                  </button>
+                <h2><i className="fas fa-credit-card"></i> Método de Pago</h2>
+                <p style={{ marginBottom: '15px', color: '#666', fontSize: '14px' }}>
+                  Selecciona cómo pagarás:
+                </p>
+                <div className="metodo-pago-list">
+                  {metodosPago.length === 0 ? (
+                    <p>No hay métodos de pago disponibles</p>
+                  ) : (
+                    metodosPago.map((metodo) => (
+                      <label 
+                        key={metodo.id} 
+                        className={`metodo-pago-option ${metodoPagoSeleccionado === metodo.id ? 'selected' : ''}`}
+                      >
+                        <input
+                          type="radio"
+                          name="metodoPago"
+                          value={metodo.id}
+                          checked={metodoPagoSeleccionado === metodo.id}
+                          onChange={(e) => setMetodoPagoSeleccionado(e.target.value)}
+                        />
+                        <span className="metodo-radio"></span>
+                        <div className="metodo-info">
+                          <strong>{metodo.nombre}</strong>
+                          {metodo.descripcion && <p>{metodo.descripcion}</p>}
+                        </div>
+                      </label>
+                    ))
+                  )}
                 </div>
               </div>
+
             </div>
 
             {/* Resumen del Pedido */}
-            <div className="order-summary">
+            <div className="checkout-summary">
               <h2><i className="fas fa-shopping-cart"></i> Resumen del Pedido</h2>
-
-              {pedidoData.items.map((item: any) => (
-                <div key={item.producto?.id_producto || item.id_producto} className="cart-item">
-                  <div className="item-info">
-                    <span className="item-name">{item.producto?.nombre || item.producto?.descripcion || 'Producto'}</span>
-                    <span className="item-qty">x{item.cantidad}</span>
+              
+              <div className="summary-items">
+                {items?.map((item) => (
+                  <div key={item.id} className="summary-item">
+                    <div className="item-info">
+                      <span className="item-name">{item.producto.nombre}</span>
+                      <span className="item-quantity">x{item.cantidad}</span>
+                    </div>
+                    <span className="item-price">${item.subtotal.toFixed(2)}</span>
                   </div>
-                  <div className="item-price">
-                    ${((item.precio_venta || item.producto?.precio_venta || 0) * item.cantidad).toFixed(2)}
-                  </div>
-                </div>
-              ))}
-
-              <div className="summary-row">
-                <span className="summary-label">Subtotal:</span>
-                <span className="summary-value">${pedidoData.total.toFixed(2)}</span>
+                ))}
               </div>
 
-              <div className="summary-row total">
-                <span>Total a Pagar:</span>
-                <span>${pedidoData.total.toFixed(2)}</span>
+              <div className="summary-divider"></div>
+
+              <div className="summary-totals">
+                <div className="summary-row">
+                  <span>Subtotal:</span>
+                  <span>${totalCarrito.toFixed(2)}</span>
+                </div>
+                <div className="summary-row">
+                  <span>IVA (15%):</span>
+                  <span>${(totalCarrito * 0.15).toFixed(2)}</span>
+                </div>
+                <div className="summary-row total-row">
+                  <strong>Total:</strong>
+                  <strong>${(totalCarrito * 1.15).toFixed(2)}</strong>
+                </div>
               </div>
 
-              <div className="trust-badges">
-                <div className="badge">
-                  <i className="fas fa-lock"></i>
-                  Pago Seguro
-                </div>
-                <div className="badge">
-                  <i className="fas fa-check-circle"></i>
-                  Garantía
-                </div>
-                <div className="badge">
-                  <i className="fas fa-headset"></i>
-                  Soporte 24/7
-                </div>
+              <button 
+                className="btn-confirmar-compra"
+                onClick={handleConfirmarCompra}
+                disabled={isLoading || !puntoRetiroSeleccionado || !metodoPagoSeleccionado}
+              >
+                {isLoading ? (
+                  <>
+                    <span className="spinner"></span>
+                    <span>Procesando...</span>
+                  </>
+                ) : (
+                  <>
+                    <i className="fas fa-check-circle"></i>
+                    <span>Confirmar Compra</span>
+                  </>
+                )}
+              </button>
+
+              <div className="security-notice">
+                <i className="fas fa-lock"></i>
+                <p>Transacción segura y encriptada</p>
               </div>
             </div>
           </div>
         </div>
       </main>
 
-      {/* Loader */}
-      {isLoading && (
-        <div className="loader show">
-          <div className="spinner"></div>
-        </div>
-      )}
-
       <Footer />
-
-      {/* Modal Confirmar Cancelación */}
-      <ConfirmModal
-        isOpen={showCancelModal}
-        onClose={() => setShowCancelModal(false)}
-        onConfirm={confirmarCancelacion}
-        type="warning"
-        title="¿Cancelar la compra?"
-        message="Si cancelas ahora, tu pedido quedará pendiente. Podrás completar el pago más tarde desde tu historial de pedidos."
-        confirmText="Sí, cancelar"
-        cancelText="Continuar con el pago"
-        icon="fa-exclamation-triangle"
-      />
     </>
   );
 };

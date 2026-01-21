@@ -33,7 +33,7 @@ const CatalogoPage: React.FC = () => {
   const [totalProductos, setTotalProductos] = useState(0);
   const [paginaActual, setPaginaActual] = useState(1);
   const [hayMasProductos, setHayMasProductos] = useState(true);
-  const productosPorPagina = 12;
+  const productosPorPagina = 24; // Aumentado para mostrar más productos inicialmente
   const observerTarget = React.useRef<HTMLDivElement>(null);
 
   // UI States
@@ -47,7 +47,7 @@ const CatalogoPage: React.FC = () => {
     categoriaId: searchParams.get('categoriaId') ? parseInt(searchParams.get('categoriaId')!) : undefined,
     marcaId: searchParams.get('marcaId') ? parseInt(searchParams.get('marcaId')!) : undefined,
     busqueda: searchParams.get('busqueda') || undefined,
-    ordenarPor: (searchParams.get('ordenarPor') as FiltrosProducto['ordenarPor']) || 'nombre_asc',
+    ordenarPor: (searchParams.get('ordenarPor') as FiltrosProducto['ordenarPor']) || 'aleatorio',
     pagina: 1,
     limite: productosPorPagina,
   }));
@@ -58,7 +58,7 @@ const CatalogoPage: React.FC = () => {
       categoriaId: searchParams.get('categoriaId') ? parseInt(searchParams.get('categoriaId')!) : undefined,
       marcaId: searchParams.get('marcaId') ? parseInt(searchParams.get('marcaId')!) : undefined,
       busqueda: searchParams.get('busqueda') || undefined,
-      ordenarPor: (searchParams.get('ordenarPor') as FiltrosProducto['ordenarPor']) || 'nombre_asc',
+      ordenarPor: (searchParams.get('ordenarPor') as FiltrosProducto['ordenarPor']) || 'aleatorio',
       pagina: 1,
       limite: productosPorPagina,
     });
@@ -95,6 +95,12 @@ const CatalogoPage: React.FC = () => {
 
   // Cargar productos cuando cambian filtros
   const cargarProductos = useCallback(async (reset: boolean = false) => {
+    // Prevenir cargas duplicadas
+    if (!reset && (loadingMore || loading)) {
+      console.log('⏳ Ya hay una carga en proceso, saltando...');
+      return;
+    }
+
     if (reset) {
       setLoading(true);
       setProductos([]);
@@ -107,29 +113,34 @@ const CatalogoPage: React.FC = () => {
     const paginaACargar = reset ? 1 : paginaActual;
 
     try {
-      console.log('🔍 Cargando productos con filtros:', { ...filtros, pagina: paginaACargar });
+      console.log('🔍 Cargando productos - Página:', paginaACargar, '- Reset:', reset);
       const response = await catalogoService.getProductos({ ...filtros, pagina: paginaACargar });
       console.log('✅ Respuesta del backend:', response);
       
       // ✅ El servicio ya normaliza la respuesta a ProductosResponse
       const productos = response?.productos || [];
-      const total = response?.total || productos.length;
-      const totalPaginas = Math.ceil(total / productosPorPagina);
+      const total = response?.total || 0;
+      const totalPaginas = response?.totalPaginas || 0;
       
-      console.log('📦 Total productos recibidos:', productos.length);
+      console.log(`📦 Productos recibidos: ${productos.length} - Total en BD: ${total} - Página ${paginaACargar} de ${totalPaginas}`);
 
       if (reset) {
         setProductos(productos);
+        setPaginaActual(2); // Preparar para la siguiente carga
       } else {
-        setProductos(prev => [...prev, ...productos]);
+        setProductos(prev => {
+          // Evitar duplicados
+          const idsExistentes = new Set(prev.map(p => p.id_producto));
+          const nuevosProductos = productos.filter(p => !idsExistentes.has(p.id_producto));
+          console.log(`➕ Agregando ${nuevosProductos.length} productos nuevos (${productos.length - nuevosProductos.length} duplicados ignorados)`);
+          return [...prev, ...nuevosProductos];
+        });
+        setPaginaActual(prev => prev + 1); // Incrementar para la siguiente carga
       }
 
       setTotalProductos(total);
-      setHayMasProductos(productos.length === productosPorPagina && paginaACargar < totalPaginas);
-
-      if (!reset && productos.length > 0) {
-        setPaginaActual(prev => prev + 1);
-      }
+      // Hay más productos si la página actual es menor al total de páginas
+      setHayMasProductos(paginaACargar < totalPaginas);
     } catch (err: any) {
   console.error('❌ ERROR cargando productos:', err);
   console.error('❌ ERROR details:', err.response?.data || err.message);
@@ -145,7 +156,7 @@ const CatalogoPage: React.FC = () => {
   setLoading(false);
   setLoadingMore(false);
 }
-  }, [filtros, paginaActual]);
+  }, [filtros, paginaActual, loading, loadingMore, productosPorPagina]);
 
   useEffect(() => {
     // Asegurar que la vista vuelva al inicio del catálogo al cambiar filtros
@@ -226,7 +237,7 @@ const CatalogoPage: React.FC = () => {
 
   const handleLimpiarFiltros = () => {
     setFiltros({
-      ordenarPor: 'nombre_asc',
+      ordenarPor: 'aleatorio',
       pagina: 1,
       limite: productosPorPagina,
     });
@@ -468,9 +479,9 @@ const CatalogoPage: React.FC = () => {
                       role="region"
                       aria-label="Lista de productos"
                     >
-                      {productos.map((producto) => (
+                      {productos.map((producto, index) => (
                         <ProductCard
-                          key={producto.id_producto}
+                          key={`${producto.id_producto}-${index}`}
                           producto={producto}
                           onVerDetalle={handleVerDetalle}
                         />

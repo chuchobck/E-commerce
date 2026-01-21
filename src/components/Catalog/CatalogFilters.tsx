@@ -79,7 +79,7 @@ const CatalogFilters: React.FC<CatalogFiltersProps> = ({
             Categorías
           </h4>
           <div className="filter-options">
-            <label
+            <div
               className={`filter-option ${!filtros.categoriaId ? 'active' : ''}`}
               onClick={() => handleCategoriaChange(undefined)}
               tabIndex={0}
@@ -88,9 +88,9 @@ const CatalogFilters: React.FC<CatalogFiltersProps> = ({
             >
               <span className="filter-radio"></span>
               <span>Todas las categorías</span>
-            </label>
+            </div>
             {categorias.map((cat) => (
-              <label
+              <div
                 key={cat.id_categoria_producto}
                 className={`filter-option ${filtros.categoriaId === cat.id_categoria_producto ? 'active' : ''}`}
                 onClick={() => handleCategoriaChange(cat.id_categoria_producto)}
@@ -100,7 +100,7 @@ const CatalogFilters: React.FC<CatalogFiltersProps> = ({
               >
                 <span className="filter-radio"></span>
                 <span>{cat.nombre}</span>
-              </label>
+              </div>
             ))}
           </div>
         </div>
@@ -122,7 +122,7 @@ const CatalogFilters: React.FC<CatalogFiltersProps> = ({
               </p>
             )}
             <div className="filter-options filter-options--marcas">
-              <label
+              <div
                 className={`filter-option ${!filtros.marcaId ? 'active' : ''}`}
                 onClick={() => handleMarcaChange(undefined)}
                 tabIndex={0}
@@ -130,9 +130,9 @@ const CatalogFilters: React.FC<CatalogFiltersProps> = ({
                 onKeyDown={(e) => e.key === 'Enter' && handleMarcaChange(undefined)}
               >
                 <span>Todas las marcas</span>
-              </label>
+              </div>
               {marcas.map((marca) => (
-                <label
+                <div
                   key={marca.id_marca}
                   className={`filter-option filter-option--marca ${filtros.marcaId === marca.id_marca ? 'active' : ''}`}
                   onClick={() => handleMarcaChange(marca.id_marca)}
@@ -140,9 +140,9 @@ const CatalogFilters: React.FC<CatalogFiltersProps> = ({
                   role="button"
                   onKeyDown={(e) => e.key === 'Enter' && handleMarcaChange(marca.id_marca)}
                 >
-                  {marca.logo_url && (
+                  {marca.imagen_url && (
                     <img
-                      src={getLogoMarcaUrl(marca.logo_url)}
+                      src={getLogoMarcaUrl(marca.imagen_url)}
                       alt={marca.nombre}
                       className="marca-logo"
                       onError={(e) => {
@@ -151,7 +151,7 @@ const CatalogFilters: React.FC<CatalogFiltersProps> = ({
                     />
                   )}
                   <span>{marca.nombre}</span>
-                </label>
+                </div>
               ))}
             </div>
           </div>
@@ -161,58 +161,54 @@ const CatalogFilters: React.FC<CatalogFiltersProps> = ({
         <div className="filter-section">
           <h4 className="filter-title">
             <i className="fas fa-dollar-sign"></i>
-            Precio
+            Rango de Precio
           </h4>
           <div className="filter-price-range">
             <div className="price-input-group">
-              <label>Mínimo</label>
-              <div className="price-input">
-                <span>$</span>
-                <input
-                  type="number"
-                  placeholder={filtrosDinamicos?.precioRango?.min?.toString() || '0'}
-                  defaultValue={filtros.precioMin || ''}
-                  onBlur={(e) => {
-                    const valor = e.target.value ? parseFloat(e.target.value) : undefined;
-                    onFiltrosChange({ precioMin: valor });
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      const valor = e.currentTarget.value ? parseFloat(e.currentTarget.value) : undefined;
-                      onFiltrosChange({ precioMin: valor });
-                    }
-                  }}
-                  min="0"
-                  step="1"
-                />
-              </div>
+              <label><span className="currency-label">$</span> Desde</label>
+              <input
+                type="number"
+                className="price-input-field"
+                placeholder="0"
+                value={filtros.precioMin || ''}
+                onChange={(e) => {
+                  const valor = e.target.value ? parseFloat(e.target.value) : undefined;
+                  onFiltrosChange({ precioMin: valor });
+                }}
+                min="0"
+                step="0.01"
+              />
             </div>
-            <div className="price-divider">-</div>
+            <div className="price-divider">—</div>
             <div className="price-input-group">
-              <label>Máximo</label>
-              <div className="price-input">
-                <span>$</span>
-                <input
-                  type="number"
-                  placeholder={filtrosDinamicos?.precioRango?.max?.toString() || '500'}
-                  defaultValue={filtros.precioMax || ''}
-                  onBlur={(e) => {
-                    const valor = e.target.value ? parseFloat(e.target.value) : undefined;
-                    onFiltrosChange({ precioMax: valor });
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      const valor = e.currentTarget.value ? parseFloat(e.currentTarget.value) : undefined;
-                      onFiltrosChange({ precioMax: valor });
-                    }
-                  }}
-                  min="0"
-                  step="1"
-                />
-              </div>
+              <label><span className="currency-label">$</span> Hasta</label>
+              <input
+                type="number"
+                className="price-input-field"
+                placeholder="Sin límite"
+                value={filtros.precioMax || ''}
+                onChange={(e) => {
+                  const valor = e.target.value ? parseFloat(e.target.value) : undefined;
+                  onFiltrosChange({ precioMax: valor });
+                }}
+                min="0"
+                step="0.01"
+              />
             </div>
           </div>
-          <p className="price-hint">Presiona Enter o haz clic afuera para filtrar</p>
+          {(filtros.precioMin || filtros.precioMax) && (
+            <div className="price-active-filter">
+              <i className="fas fa-check-circle"></i>
+              <span>
+                {filtros.precioMin && filtros.precioMax 
+                  ? `$${filtros.precioMin} - $${filtros.precioMax}`
+                  : filtros.precioMin 
+                  ? `Desde $${filtros.precioMin}`
+                  : `Hasta $${filtros.precioMax}`
+                }
+              </span>
+            </div>
+          )}
         </div>
 
         {/* ORIGEN (dinámico) */}

@@ -42,10 +42,36 @@ export const authService = {
     }
   },
 
+  // Actualizar perfil
+  async updateProfile(data: Partial<RegisterRequest>) {
+    const response = await api.put('/auth/perfil', data);
+    if (response.data.status === 'success') {
+      const currentUser = this.getCurrentUser();
+      if (currentUser) {
+        localStorage.setItem('barbox_user', JSON.stringify({
+          ...currentUser,
+          ...response.data.data.cliente
+        }));
+      }
+    }
+    return response.data;
+  },
+
+  // Cambiar contraseña
+  async changePassword(passwordActual: string, passwordNueva: string) {
+    const response = await api.put('/auth/cambiar-password', {
+      passwordActual,
+      passwordNueva
+    });
+    return response.data;
+  },
+
   // Logout
   logout(): void {
     localStorage.removeItem('barbox_token');
     localStorage.removeItem('barbox_user');
+    localStorage.removeItem('barbox_cart_id');
+    localStorage.removeItem('barbox_session_id');
   },
 
   // Obtener usuario actual

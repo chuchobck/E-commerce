@@ -15,6 +15,7 @@ export interface Marca {
   id_categoria_producto?: number;
   estado?: string;
   logo_url?: string | null;
+  imagen_url?: string | null;
   cantidad_productos?: number;
   activo?: boolean;
   categoria?: Categoria;
@@ -59,7 +60,7 @@ export interface FiltrosProducto {
   origen?: string;
   enStock?: boolean;
   busqueda?: string;
-  ordenarPor?: 'precio_asc' | 'precio_desc' | 'nombre_asc' | 'nombre_desc' | 'popular';
+  ordenarPor?: 'precio_asc' | 'precio_desc' | 'nombre_asc' | 'nombre_desc' | 'popular' | 'aleatorio';
   pagina?: number;
   limite?: number;
 }
@@ -80,9 +81,12 @@ export interface FiltrosDinamicos {
 
 // Para el carrito local
 export interface ItemCarrito {
+  id?: string;  // ID del item en el carrito
   producto: Producto;
   cantidad: number;
+  precio_unitario?: number;
   precio_venta?: number; // Para compatibilidad
+  subtotal: number;  // Cantidad * precio_unitario
 }
 
 // Para favoritos (API)

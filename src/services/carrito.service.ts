@@ -61,10 +61,10 @@ export const carritoService = {
    * Obtener carrito del usuario
    */
   async obtenerCarrito(usuarioId: number): Promise<Carrito | null> {
-    console.log('🛒 API: Llamando GET /carrito?usuarioId=' + usuarioId);
+    console.log('🛒 API: Llamando GET /carrito?clienteId=' + usuarioId);
     try {
       const response = await api.get<ApiResponse<Carrito | null>>(
-        `/carrito?usuarioId=${usuarioId}`
+        `/carrito?clienteId=${usuarioId}`
       );
       console.log('🛒 API: Respuesta carrito:', response.data);
       return response.data.data;
@@ -95,10 +95,10 @@ export const carritoService = {
    * Crear carrito nuevo
    */
   async crearCarrito(usuarioId: number, id_canal: string = 'WEB'): Promise<Carrito> {
-    console.log('🛒 API: Llamando POST /carrito', { usuarioId, id_canal });
+    console.log('🛒 API: Llamando POST /carrito', { clienteId: usuarioId, id_canal });
     try {
       const response = await api.post<ApiResponse<Carrito>>('/carrito', {
-        usuarioId,
+        clienteId: usuarioId,
         id_canal
       });
       return response.data.data;

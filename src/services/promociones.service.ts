@@ -11,9 +11,12 @@ export interface CategoriaPromocion {
 }
 
 export interface ProductoPromocion {
-  id: number;
+  id_producto?: string;
+  id_promocion?: number;
   cantidad: number;
-  es_regalo: boolean;
+  es_principal?: boolean;
+  es_regalo?: boolean;
+  orden?: number;
   producto: {
     id_producto: string;
     descripcion: string;
@@ -78,7 +81,7 @@ class PromocionesService {
   // Obtener categorías de promoción (ocasiones)
   async getCategorias(): Promise<CategoriaPromocion[]> {
     try {
-      const response = await api.get('/promociones/categorias');
+      const response = await api.get('/categorias-promocion');
       return response.data.data;
     } catch (error) {
       throw error;
@@ -99,7 +102,22 @@ class PromocionesService {
       if (filtros.maxPrecio !== undefined) params.append('maxPrecio', filtros.maxPrecio.toString());
 
       const response = await api.get(`/promociones?${params.toString()}`);
-      return response.data.data;
+      // El backend devuelve { status, message, data } donde data es el array de promociones
+      const promocionesRaw = response.data.data || [];
+      
+      // Mapear detalle_promocion a promocion_productos
+      const promociones = promocionesRaw.map((promo: any) => ({
+        ...promo,
+        promocion_productos: promo.detalle_promocion || promo.promocion_productos || []
+      }));
+      
+      return {
+        promociones: promociones,
+        total: promociones.length || 0,
+        pagina: filtros.pagina || 1,
+        totalPaginas: Math.ceil((promociones.length || 0) / (filtros.limite || 20)),
+        limite: filtros.limite || 20
+      };
     } catch (error) {
       throw error;
     }
@@ -109,7 +127,13 @@ class PromocionesService {
   async getPromocionesDestacadas(limite: number = 6): Promise<Promocion[]> {
     try {
       const response = await api.get(`/promociones/destacadas?limite=${limite}`);
-      return response.data.data;
+      const promocionesRaw = response.data.data || [];
+      
+      // Mapear detalle_promocion a promocion_productos
+      return promocionesRaw.map((promo: any) => ({
+        ...promo,
+        promocion_productos: promo.detalle_promocion || promo.promocion_productos || []
+      }));
     } catch (error) {
       throw error;
     }
@@ -119,7 +143,13 @@ class PromocionesService {
   async getPromocion(id: number): Promise<Promocion> {
     try {
       const response = await api.get(`/promociones/${id}`);
-      return response.data.data;
+      const promo = response.data.data;
+      
+      // Mapear detalle_promocion a promocion_productos
+      return {
+        ...promo,
+        promocion_productos: promo.detalle_promocion || promo.promocion_productos || []
+      };
     } catch (error) {
       throw error;
     }

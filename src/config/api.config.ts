@@ -19,6 +19,10 @@ export const getImagenProductoUrl = (nombreArchivo?: string | null): string => {
   if (!nombreArchivo) {
     return 'https://placehold.co/300?text=Sin+imagen';
   }
+  // Si ya es una URL completa (Cloudinary, S3, etc.), devolverla tal cual
+  if (nombreArchivo.startsWith('http://') || nombreArchivo.startsWith('https://')) {
+    return nombreArchivo;
+  }
   return `${IMAGE_BASE_URL}/productos/${nombreArchivo}`;
 };
 
@@ -26,12 +30,20 @@ export const getLogoMarcaUrl = (nombreArchivo?: string | null): string => {
   if (!nombreArchivo) {
     return 'https://placehold.co/100?text=Sin+logo';
   }
+  // Si ya es una URL completa, devolverla tal cual
+  if (nombreArchivo.startsWith('http://') || nombreArchivo.startsWith('https://')) {
+    return nombreArchivo;
+  }
   return `${IMAGE_BASE_URL}/logos/${nombreArchivo}`;
 };
 
 export const getPromocionUrl = (nombreArchivo?: string | null): string => {
   if (!nombreArchivo) {
     return 'https://placehold.co/1200x400?text=Promoción';
+  }
+  // Si ya es una URL completa, devolverla tal cual
+  if (nombreArchivo.startsWith('http://') || nombreArchivo.startsWith('https://')) {
+    return nombreArchivo;
   }
   return `${IMAGE_BASE_URL}/promociones/${nombreArchivo}`;
 };

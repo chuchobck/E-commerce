@@ -1,0 +1,226 @@
+.confirmacion-page {
+  min-height: 60vh;
+  padding: 60px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.confirmacion-card {
+  max-width: 600px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 20px;
+  padding: 50px 40px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.confirmacion-icon {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 30px;
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: scaleIn 0.5s ease-out;
+}
+
+.confirmacion-icon i {
+  font-size: 50px;
+  color: white;
+}
+
+.confirmacion-card h1 {
+  font-size: 32px;
+  color: #2d3748;
+  margin-bottom: 10px;
+  animation: fadeInUp 0.6s ease-out 0.1s both;
+}
+
+.confirmacion-subtitle {
+  font-size: 18px;
+  color: #718096;
+  margin-bottom: 40px;
+  animation: fadeInUp 0.6s ease-out 0.2s both;
+}
+
+.confirmacion-details {
+  background: #f7fafc;
+  border-radius: 15px;
+  padding: 30px;
+  margin-bottom: 30px;
+  animation: fadeInUp 0.6s ease-out 0.3s both;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+}
+
+.detail-row.total-row {
+  border-top: 2px solid #e2e8f0;
+  margin-top: 10px;
+  padding-top: 20px;
+}
+
+.detail-label {
+  font-size: 16px;
+  color: #4a5568;
+}
+
+.detail-value {
+  font-size: 16px;
+  color: #2d3748;
+  font-weight: 600;
+}
+
+.detail-row.total-row .detail-value {
+  font-size: 24px;
+  color: #667eea;
+}
+
+.detail-divider {
+  height: 1px;
+  background: #e2e8f0;
+  margin: 15px 0;
+}
+
+.badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.badge-PENDIENTE {
+  background: #fef5e7;
+  color: #f39c12;
+}
+
+.badge-PAGADO {
+  background: #d5f4e6;
+  color: #27ae60;
+}
+
+.badge-PREPARACION {
+  background: #e8f4f8;
+  color: #3498db;
+}
+
+.badge-LISTO {
+  background: #d5f4e6;
+  color: #27ae60;
+}
+
+.confirmacion-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  background: #edf2f7;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 30px;
+  text-align: left;
+  animation: fadeInUp 0.6s ease-out 0.4s both;
+}
+
+.confirmacion-info i {
+  font-size: 24px;
+  color: #667eea;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.confirmacion-info p {
+  color: #4a5568;
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.confirmacion-actions {
+  display: flex;
+  gap: 15px;
+  animation: fadeInUp 0.6s ease-out 0.5s both;
+}
+
+.confirmacion-actions button {
+  flex: 1;
+  padding: 15px 25px;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+  background: white;
+  color: #667eea;
+  border: 2px solid #667eea;
+}
+
+.btn-secondary:hover {
+  background: #667eea;
+  color: white;
+  transform: translateY(-2px);
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 600px) {
+  .confirmacion-card {
+    padding: 40px 25px;
+  }
+
+  .confirmacion-card h1 {
+    font-size: 26px;
+  }
+
+  .confirmacion-actions {
+    flex-direction: column;
+  }
+
+  .confirmacion-actions button {
+    width: 100%;
+  }
+}

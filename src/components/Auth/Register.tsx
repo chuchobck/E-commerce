@@ -12,7 +12,7 @@ import './Auth.css';
 
 const Register: React.FC = () => {
   const [formData, setFormData] = useState({
-    email: '',
+    usuario: '',
     password: '',
     confirmPassword: '',
     nombre1: '',
@@ -23,6 +23,7 @@ const Register: React.FC = () => {
     telefono: '',
     celular: '',
     direccion: '',
+    email: '',  // Email ahora es opcional
     id_ciudad: 'GYE', // Default ciudad (código de 3 caracteres)
   });
 
@@ -60,9 +61,14 @@ const Register: React.FC = () => {
         if (!/^\d{10,13}$/.test(limpio)) return 'Debe tener 10 o 13 dígitos';
         if (!validarCedulaORUC(value)) return 'Cédula/RUC inválido (verificar dígitos)';
         break;
+      case 'usuario':
+        if (!value) return 'El usuario es requerido';
+        if (value.length < 3) return 'Mínimo 3 caracteres';
+        if (value.length > 30) return 'Máximo 30 caracteres';
+        if (!/^[a-zA-Z0-9_]+$/.test(value)) return 'Solo letras, números y guion bajo';
+        break;
       case 'email':
-        if (!value) return 'El email es requerido';
-        if (!validarEmail(value)) return 'Formato de email inválido';
+        if (value && !validarEmail(value)) return 'Formato de email inválido';
         break;
       case 'password':
         if (!value) return 'La contraseña es requerida';
@@ -106,8 +112,8 @@ const Register: React.FC = () => {
     
     setError(''); // Limpiar error general
     
-    // Validar en tiempo real para email siempre, otros campos solo si están touched
-    if (name === 'email' || touched[name]) {
+    // Validar en tiempo real para usuario y email siempre, otros campos solo si están touched
+    if (['usuario', 'email'].includes(name) || touched[name]) {
       const error = validateField(name, ['nombre1', 'nombre2', 'apellido1', 'apellido2'].includes(name) ? value.replace(/[^a-záéíóúñüA-ZÁÉÍÓÚÑÜ\s\-]/g, '') : value);
       setFieldErrors(prev => ({ ...prev, [name]: error || '' }));
       
@@ -134,7 +140,7 @@ const Register: React.FC = () => {
     setError('');
 
     // Validaciones
-    if (!formData.email || !formData.password || !formData.nombre1 || !formData.apellido1 || !formData.ruc_cedula || !formData.celular) {
+    if (!formData.usuario || !formData.password || !formData.nombre1 || !formData.apellido1 || !formData.ruc_cedula || !formData.celular) {
       setError('Por favor, completa todos los campos obligatorios');
       return;
     }
@@ -159,43 +165,32 @@ const Register: React.FC = () => {
       return;
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      setError('Por favor, ingresa un email válido');
-      return;
-    }
-
     setLoading(true);
     try {
       // Generar ID de cliente de 7 caracteres (C + 6 dígitos)
       const clienteId = 'C' + Date.now().toString().slice(-6).padStart(6, '0');
       
       console.log('📝 Iniciando registro con datos:', {
-        clienteId,
+        usuario: formData.usuario,
         nombre1: formData.nombre1,
         apellido1: formData.apellido1,
-        email: formData.email,
+        email: formData.email || 'no proporcionado',
         ruc_cedula: formData.ruc_cedula
       });
       
       await register({
-        cliente: {
-          id_cliente: clienteId,
-          nombre1: formData.nombre1,
-          nombre2: formData.nombre2 || '',
-          apellido1: formData.apellido1,
-          apellido2: formData.apellido2 || '',
-          ruc_cedula: formData.ruc_cedula,
-          telefono: formData.telefono || null,
-          celular: formData.celular || null,
-          email: formData.email || null,
-          direccion: formData.direccion || '',
-          id_ciudad: formData.id_ciudad,
-        },
-        usuario: {
-          email: formData.email,
-          password: formData.password,
-        },
+        usuario: formData.usuario,
+        password: formData.password,
+        nombre1: formData.nombre1,
+        nombre2: formData.nombre2 || undefined,
+        apellido1: formData.apellido1,
+        apellido2: formData.apellido2 || undefined,
+        ruc_cedula: formData.ruc_cedula,
+        telefono: formData.telefono || undefined,
+        celular: formData.celular || undefined,
+        email: formData.email || undefined,
+        direccion: formData.direccion || undefined,
+        id_ciudad: formData.id_ciudad,
       });
 
       console.log('✅ Registro exitoso, redirigiendo...');
@@ -361,11 +356,46 @@ const Register: React.FC = () => {
           )}
         </div>
 
+        {/* Usuario */}
+        <div className={`form-group-modern ${fieldErrors.usuario && touched.usuario ? 'has-error' : ''} ${formData.usuario && !fieldErrors.usuario && touched.usuario ? 'has-success' : ''}`}>
+          <label htmlFor="usuario">
+            <i className="fas fa-user"></i>
+            Usuario *
+          </label>
+          <div className="input-wrapper">
+            <input
+              type="text"
+              id="usuario"
+              name="usuario"
+              value={formData.usuario}
+              onChange={handleChange}
+              onBlur={() => handleBlur('usuario')}
+              disabled={loading}
+              placeholder="usuario123"
+              autoComplete="username"
+              maxLength={30}
+            />
+            {formData.usuario && !fieldErrors.usuario && touched.usuario && (
+              <span className="input-success-icon">
+                <i className="fas fa-check-circle"></i>
+              </span>
+            )}
+          </div>
+          <small className="field-hint">
+            <i className="fas fa-info-circle"></i> Solo letras, números y guion bajo (min. 3 caracteres)
+          </small>
+          {fieldErrors.usuario && touched.usuario && (
+            <span className="field-error-message animated">
+              <i className="fas fa-exclamation-circle"></i> {fieldErrors.usuario}
+            </span>
+          )}
+        </div>
+
         {/* Email */}
         <div className={`form-group-modern ${fieldErrors.email && touched.email ? 'has-error' : ''} ${formData.email && !fieldErrors.email && touched.email ? 'has-success' : ''}`}>
           <label htmlFor="email">
             <i className="fas fa-envelope"></i>
-            Correo Electrónico *
+            Correo Electrónico (opcional)
           </label>
           <div className="input-wrapper">
             <input

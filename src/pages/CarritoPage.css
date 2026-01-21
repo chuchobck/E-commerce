@@ -174,9 +174,15 @@
 /* ==================== CART LAYOUT ==================== */
 .cart-layout {
   display: grid;
-  grid-template-columns: 1fr 400px;
+  grid-template-columns: 2fr 1fr;
   gap: 2rem;
   align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .cart-layout {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ==================== CART ITEMS ==================== */

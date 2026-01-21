@@ -269,14 +269,12 @@ const CarritoPage: React.FC = () => {
   // Obtener icono de categoría
   const getCategoryIcon = (categoria?: string): string => {
     const iconMap: Record<string, string> = {
-      'Whisky': 'fa-glass-whiskey',
-      'Vinos': 'fa-wine-glass-alt',
       'Vino': 'fa-wine-glass-alt',
-      'Cervezas': 'fa-beer',
-      'Cerveza': 'fa-beer',
       'Ron': 'fa-cocktail',
       'Vodka': 'fa-glass-martini-alt',
-      'Tequila': 'fa-pepper-hot',
+      'Whisky': 'fa-glass-whiskey',
+      'Cerveza': 'fa-beer',
+      'Cocteles': 'fa-blender',
     };
     return iconMap[categoria || ''] || 'fa-wine-bottle';
   };
@@ -294,7 +292,7 @@ const CarritoPage: React.FC = () => {
               mensajeNotificacion.tipo === 'error' ? 'exclamation-circle' : 'info-circle'
             }`}></i>
             <span>{mensajeNotificacion.texto}</span>
-            <button onClick={() => setMensajeNotificacion(null)}>
+            <button onClick={() => setMensajeNotificacion(null)} aria-label="Cerrar notificación">
               <i className="fas fa-times"></i>
             </button>
           </div>
@@ -317,7 +315,8 @@ const CarritoPage: React.FC = () => {
                 </Link>
               </div>
             ) : (
-                {/* Cart Items */}
+              <div className="cart-layout">
+                {/* Left: Resumen de compra (items) */}
                 <div className="cart-items">
                   <div className="cart-items__header">
                     <h2>Resumen de compra</h2>

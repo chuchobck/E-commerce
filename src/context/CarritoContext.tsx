@@ -79,6 +79,7 @@ export const CarritoProvider: React.FC<CarritoProviderProps> = ({ children, usua
       return [];
     }
     return carritoAPI.carrito_detalle.map(detalle => ({
+      id: `${detalle.id_carrito}_${detalle.id_producto}`,
       producto: {
         id_producto: detalle.producto.id_producto,
         descripcion: detalle.producto.descripcion,
@@ -88,7 +89,9 @@ export const CarritoProvider: React.FC<CarritoProviderProps> = ({ children, usua
         estado: detalle.producto.estado,
         id_marca: detalle.producto.marca?.id_marca
       } as Producto,
-      cantidad: detalle.cantidad
+      cantidad: detalle.cantidad,
+      precio_unitario: detalle.producto.precio_venta,
+      subtotal: detalle.cantidad * Number(detalle.producto.precio_venta)
     }));
   }, []);
 
@@ -234,12 +237,21 @@ export const CarritoProvider: React.FC<CarritoProviderProps> = ({ children, usua
           if (existente) {
             return prev.map(item =>
               item.producto.id_producto === producto.id_producto
-                ? { ...item, cantidad: item.cantidad + cantidad }
+                ? { 
+                    ...item, 
+                    cantidad: item.cantidad + cantidad,
+                    subtotal: (item.cantidad + cantidad) * Number(item.producto.precio_venta)
+                  }
                 : item
             );
           }
           
-          return [...prev, { producto, cantidad }];
+          return [...prev, { 
+            producto, 
+            cantidad,
+            precio_unitario: producto.precio_venta,
+            subtotal: cantidad * Number(producto.precio_venta)
+          }];
         });
       }
     } catch (err: any) {
@@ -252,11 +264,20 @@ export const CarritoProvider: React.FC<CarritoProviderProps> = ({ children, usua
         if (existente) {
           return prev.map(item =>
             item.producto.id_producto === producto.id_producto
-              ? { ...item, cantidad: item.cantidad + cantidad }
+              ? { 
+                  ...item, 
+                  cantidad: item.cantidad + cantidad,
+                  subtotal: (item.cantidad + cantidad) * Number(item.producto.precio_venta)
+                }
               : item
           );
         }
-        return [...prev, { producto, cantidad }];
+        return [...prev, { 
+          producto, 
+          cantidad,
+          precio_unitario: producto.precio_venta,
+          subtotal: cantidad * Number(producto.precio_venta)
+        }];
       });
     } finally {
       setIsLoading(false);

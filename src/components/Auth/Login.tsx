@@ -4,13 +4,13 @@ import { useAuth } from '../../context/AuthContext';
 import './Auth.css';
 
 const Login: React.FC = () => {
-  const [email, setEmail] = useState('');
+  const [usuario, setUsuario] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [touched, setTouched] = useState<{ email?: boolean; password?: boolean }>({});
-  const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({});
+  const [touched, setTouched] = useState<{ usuario?: boolean; password?: boolean }>({});
+  const [fieldErrors, setFieldErrors] = useState<{ usuario?: string; password?: string }>({});
 
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -20,12 +20,12 @@ const Login: React.FC = () => {
   const from = (location.state as any)?.from || '/';
 
   // Validaciones en tiempo real
-  const validateEmail = (value: string): string | undefined => {
+  const validateUsuario = (value: string): string | undefined => {
     if (!value.trim()) {
-      return 'El email es requerido';
+      return 'El usuario es requerido';
     }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-      return 'Formato de email inválido';
+    if (value.length < 3) {
+      return 'Mínimo 3 caracteres';
     }
     return undefined;
   };
@@ -40,15 +40,15 @@ const Login: React.FC = () => {
     return undefined;
   };
 
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleUsuarioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setEmail(value);
+    setUsuario(value);
     setError(''); // Limpiar error general
     
     // Validar después de que el usuario escriba
-    if (touched.email) {
-      const error = validateEmail(value);
-      setFieldErrors(prev => ({ ...prev, email: error }));
+    if (touched.usuario) {
+      const error = validateUsuario(value);
+      setFieldErrors(prev => ({ ...prev, usuario: error }));
     }
   };
 
@@ -64,11 +64,11 @@ const Login: React.FC = () => {
     }
   };
 
-  const handleBlur = (field: 'email' | 'password') => {
+  const handleBlur = (field: 'usuario' | 'password') => {
     setTouched(prev => ({ ...prev, [field]: true }));
-    if (field === 'email') {
-      const error = validateEmail(email);
-      setFieldErrors(prev => ({ ...prev, email: error }));
+    if (field === 'usuario') {
+      const error = validateUsuario(usuario);
+      setFieldErrors(prev => ({ ...prev, usuario: error }));
     } else {
       const error = validatePassword(password);
       setFieldErrors(prev => ({ ...prev, password: error }));
@@ -80,12 +80,12 @@ const Login: React.FC = () => {
     setError('');
 
     // Validar todos los campos
-    const emailError = validateEmail(email);
+    const usuarioError = validateUsuario(usuario);
     const passwordError = validatePassword(password);
 
-    if (emailError || passwordError) {
+    if (usuarioError || passwordError) {
       setFieldErrors({
-        email: emailError,
+        usuario: usuarioError,
         password: passwordError
       });
       setError('Por favor, corrige los errores antes de continuar');
@@ -94,7 +94,7 @@ const Login: React.FC = () => {
 
     setLoading(true);
     try {
-      await login(email, password);
+      await login(usuario, password);
       // Redirigir a la página de origen o al inicio
       navigate(from, { replace: true });
     } catch (err: any) {
@@ -121,36 +121,35 @@ const Login: React.FC = () => {
       )}
 
       <form onSubmit={handleSubmit} noValidate className="modern-form">
-        <div className={`form-group-modern ${fieldErrors.email && touched.email ? 'has-error' : ''} ${email && !fieldErrors.email ? 'has-success' : ''}`}>
-          <label htmlFor="email">
-            <i className="fas fa-envelope"></i>
-            Correo Electrónico
+        <div className={`form-group-modern ${fieldErrors.usuario && touched.usuario ? 'has-error' : ''} ${usuario && !fieldErrors.usuario ? 'has-success' : ''}`}>
+          <label htmlFor="usuario">
+            <i className="fas fa-user"></i>
+            Usuario
           </label>
           <div className="input-wrapper">
             <input
-              type="email"
-              id="email"
-              name="email"
-              value={email}
-              onChange={handleEmailChange}
-              onBlur={() => handleBlur('email')}
-              placeholder="ejemplo@correo.com"
+              type="text"
+              id="usuario"
+              name="usuario"
+              value={usuario}
+              onChange={handleUsuarioChange}
+              onBlur={() => handleBlur('usuario')}
+              placeholder="Ingresa tu usuario"
               disabled={loading}
-              autoComplete="email"
+              autoComplete="username"
               tabIndex={1}
-              aria-describedby={fieldErrors.email && touched.email ? "email-error" : undefined}
-              aria-invalid={fieldErrors.email && touched.email ? "true" : "false"}
+              aria-describedby={fieldErrors.usuario && touched.usuario ? "usuario-error" : undefined}
             />
-            {email && !fieldErrors.email && (
+            {usuario && !fieldErrors.usuario && (
               <span className="input-success-icon">
                 <i className="fas fa-check-circle"></i>
               </span>
             )}
           </div>
-          {fieldErrors.email && touched.email && (
+          {fieldErrors.usuario && touched.usuario && (
             <span className="field-error-message animated">
               <i className="fas fa-exclamation-circle"></i>
-              {fieldErrors.email}
+              {fieldErrors.usuario}
             </span>
           )}
         </div>
@@ -170,9 +169,10 @@ const Login: React.FC = () => {
               onBlur={() => handleBlur('password')}
               placeholder="Ingresa tu contraseña"
               disabled={loading}
-              autoComplete="current-password"              tabIndex={2}
+              autoComplete="current-password"
+              tabIndex={2}
               aria-describedby={fieldErrors.password && touched.password ? "password-error" : undefined}
-              aria-invalid={fieldErrors.password && touched.password ? "true" : "false"}            />
+            />
             <button
               type="button"
               className="toggle-password-modern"
@@ -191,7 +191,7 @@ const Login: React.FC = () => {
           )}
         </div>
 
-        <button type="submit" className="btn-modern btn-modern--primary" disabled={loading || !!fieldErrors.email || !!fieldErrors.password}>
+        <button type="submit" className="btn-modern btn-modern--primary" disabled={loading || !!fieldErrors.usuario || !!fieldErrors.password}>
           {loading ? (
             <>
               <span className="spinner"></span>

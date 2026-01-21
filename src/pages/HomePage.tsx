@@ -31,24 +31,38 @@ const HomePage: React.FC = () => {
   const slides = [
     {
       image: 'https://images.unsplash.com/photo-1569529465841-dfecdab7503b?w=400&h=480&fit=crop&q=80',
-      caption: '🏢 CORPORATIVO PROMOCIONES',
-      subtitle: 'Hasta 40% OFF en Whiskies Premium',
-      badge: '-40%',
-      link: '/promociones?categoria=Corporativo'
+      caption: '🏢 CORPORATIVO',
+      subtitle: 'Paquetes especiales para empresas y eventos',
+      badge: 'ESPECIAL',
+      link: '/promociones?categoria=CORPORATIVO'
     },
     {
       image: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=400&h=480&fit=crop&q=80',
-      caption: '💝 PROMOCIONES',
-      subtitle: '3x2 en Vinos Seleccionados',
+      caption: '💝 SAN VALENTIN',
+      subtitle: 'Celebra el amor con nuestras ofertas románticas',
       badge: '3x2',
-      link: '/promociones?categoria=San Valentín'
+      link: '/promociones?categoria=SAN VALENTIN'
+    },
+    {
+      image: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=400&h=480&fit=crop&q=80',
+      caption: '🎂 CUMPLEAÑOS',
+      subtitle: 'Paquetes especiales para celebrar tu día',
+      badge: 'NUEVO',
+      link: '/promociones?categoria=CUMPLEAÑOS'
+    },
+    {
+      image: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=400&h=480&fit=crop&q=80',
+      caption: '💍 BODAS',
+      subtitle: 'Ofertas y descuentos para tu gran día',
+      badge: 'OFERTA',
+      link: '/promociones?categoria=BODAS'
     },
     {
       image: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=400&h=480&fit=crop&q=80',
-      caption: '🎊 FIESTAS PROMOCIONES',
-      subtitle: 'Combos Especiales desde $29.99',
-      badge: 'NUEVO',
-      link: '/promociones?categoria=Fiestas'
+      caption: '🎭 CARNAVAL',
+      subtitle: 'Ofertas temáticas para la fiesta',
+      badge: 'PROMO',
+      link: '/promociones?categoria=CARNAVAL'
     }
   ];
 

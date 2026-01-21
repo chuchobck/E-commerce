@@ -88,15 +88,21 @@ export const catalogoService = {
         api.get(`${API_URL}/productos?${params.toString()}`)
       );
       
+      console.log('🔍 Respuesta completa del backend:', response.data);
+      
       // ✅ Normalizar respuesta del backend a ProductosResponse
       const backendData = response.data?.data || response.data;
+      const pagination = response.data?.pagination;
       const productos = Array.isArray(backendData) ? backendData : (backendData?.productos || []);
+      
+      console.log('📊 Paginación recibida:', pagination);
+      console.log('📦 Total de productos según backend:', pagination?.total || productos.length);
       
       return {
         productos,
-        total: productos.length,
-        pagina: filtros?.pagina || 1,
-        totalPaginas: Math.ceil(productos.length / (filtros?.limite || 10))
+        total: pagination?.total || productos.length,
+        pagina: pagination?.pagina || filtros?.pagina || 1,
+        totalPaginas: pagination?.totalPaginas || Math.ceil((pagination?.total || productos.length) / (filtros?.limite || 10))
       };
     } catch (error) {
       const errorInfo = getErrorInfo(error);

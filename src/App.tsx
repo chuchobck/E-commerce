@@ -18,9 +18,9 @@ import ContactoPage from './pages/ContactoPage';
 import AcercaPage from './pages/AcercaPage';
 import CarritoPage from './pages/CarritoPage';
 import CheckoutPage from './pages/CheckoutPage';
-import PedidoConfirmadoPage from './pages/PedidoConfirmadoPage';
+import ConfirmacionPedidoPage from './pages/ConfirmacionPedidoPage';
 import MiCuentaPage from './pages/MiCuentaPage';
-import MisPedidosPage from './pages/MisPedidosPage';
+import MisPedidosNewPage from './pages/MisPedidosNewPage';
 import FavoritosPage from './pages/FavoritosPage';
 import NotFoundPage from './pages/NotFoundPage';
 import './styles/accessibility.css'; // WCAG 2.2 Accessibility Styles
@@ -76,9 +76,9 @@ const RouterContent: React.FC<{ showKeyboardHelp: boolean; setShowKeyboardHelp: 
         
         {/* Rutas protegidas */}
         <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
-        <Route path="/pedido-confirmado" element={<ProtectedRoute><PedidoConfirmadoPage /></ProtectedRoute>} />
+        <Route path="/confirmacion-pedido" element={<ProtectedRoute><ConfirmacionPedidoPage /></ProtectedRoute>} />
         <Route path="/mi-cuenta" element={<ProtectedRoute><MiCuentaPage /></ProtectedRoute>} />
-        <Route path="/mis-pedidos" element={<ProtectedRoute><MisPedidosPage /></ProtectedRoute>} />
+        <Route path="/mis-pedidos" element={<ProtectedRoute><MisPedidosNewPage /></ProtectedRoute>} />
         
         {/* Ruta 404 - Debe estar al final */}
         <Route path="*" element={<NotFoundPage />} />

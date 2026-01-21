@@ -168,60 +168,84 @@
 }
 
 .price-input-group label {
-  display: block;
-  font-size: 0.75rem;
-  color: var(--color-texto-secundario);
-  margin-bottom: 0.5rem;
-}
-
-.price-input {
   display: flex;
   align-items: center;
-  background: var(--color-fondo-navbar);
-  border: 2px solid transparent;
-  border-radius: 8px;
-  overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-.price-input:focus-within {
-  border-color: var(--color-secundario);
-  background: white;
-}
-
-.price-input span {
-  padding: 0.5rem 0.75rem;
+  gap: 0.25rem;
+  font-size: 0.8rem;
   color: var(--color-texto-secundario);
+  margin-bottom: 0.5rem;
   font-weight: 500;
 }
 
-.price-input input {
-  flex: 1;
-  padding: 0.5rem 0.5rem 0.5rem 0;
-  border: none;
-  background: transparent;
-  outline: none;
+.currency-label {
+  color: var(--color-secundario);
+  font-weight: 700;
   font-size: 0.9rem;
-  width: 100%;
-  min-width: 0;
 }
 
-.price-input input::placeholder {
-  color: #bbb;
+.price-input-field {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  background: var(--color-fondo-navbar);
+  border: 2px solid var(--color-borde);
+  border-radius: 10px;
+  outline: none;
+  font-size: 0.95rem;
+  color: var(--color-principal);
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.price-input-field:focus {
+  border-color: var(--color-secundario);
+  background: white;
+  box-shadow: 0 0 0 3px rgba(199, 80, 64, 0.1);
+}
+
+.price-input-field::placeholder {
+  color: #aaa;
+  font-weight: 400;
+}
+
+/* Ocultar flechas de input number */
+.price-input-field::-webkit-outer-spin-button,
+.price-input-field::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.price-input-field[type=number] {
+  -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 .price-divider {
   padding-bottom: 0.5rem;
   color: var(--color-texto-secundario);
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 1.1rem;
 }
 
-.price-hint {
-  font-size: 0.75rem;
-  color: var(--color-texto-secundario);
-  margin-top: 0.5rem;
-  font-style: italic;
-  opacity: 0.8;
+.price-active-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(199, 80, 64, 0.1);
+  border-left: 3px solid var(--color-secundario);
+  border-radius: 6px;
+}
+
+.price-active-filter i {
+  color: var(--color-secundario);
+  font-size: 0.85rem;
+}
+
+.price-active-filter span {
+  color: var(--color-secundario);
+  font-size: 0.85rem;
+  font-weight: 600;
 }
 
 /* Filter Chips */

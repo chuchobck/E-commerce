@@ -93,7 +93,7 @@ const Header: React.FC = () => {
   const categorias = [
     { id: 1, nombre: 'Vino', icono: 'fa-wine-glass-alt' },
     { id: 2, nombre: 'Ron', icono: 'fa-cocktail' },
-    { id: 3, nombre: 'Voodka', icono: 'fa-glass-martini-alt' },
+    { id: 3, nombre: 'Vodka', icono: 'fa-glass-martini-alt' },
     { id: 4, nombre: 'Whisky', icono: 'fa-glass-whiskey' },
     { id: 5, nombre: 'Cerveza', icono: 'fa-beer' },
     { id: 6, nombre: 'Cocteles', icono: 'fa-blender' },

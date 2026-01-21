@@ -15,7 +15,6 @@ const MiCuentaPage: React.FC = () => {
   const [formData, setFormData] = useState({
     nombre: '',
     apellido: '',
-    email: '',
     telefono: '',
     celular: '',
     direccion: '',
@@ -28,7 +27,6 @@ const MiCuentaPage: React.FC = () => {
       setFormData({
         nombre: user.cliente?.nombre1 || '',
         apellido: user.cliente?.apellido1 || '',
-        email: user.email || '',
         telefono: user.cliente?.telefono || '',
         celular: user.cliente?.celular || '',
         direccion: user.cliente?.direccion || '',
@@ -183,19 +181,6 @@ const MiCuentaPage: React.FC = () => {
                             placeholder="Tu apellido"
                           />
                         </div>
-                      </div>
-
-                      <div className="form-group">
-                        <label htmlFor="email">Correo Electrónico</label>
-                        <input
-                          type="email"
-                          id="email"
-                          name="email"
-                          value={formData.email}
-                          onChange={handleInputChange}
-                          disabled={!editMode}
-                          placeholder="tu@email.com"
-                        />
                       </div>
 
                       <div className="form-row">

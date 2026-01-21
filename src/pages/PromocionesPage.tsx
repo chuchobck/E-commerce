@@ -15,23 +15,16 @@ import './PromocionesPage.css';
 // Iconos para cada ocasión
 const ICONOS_OCASIONES: { [key: string]: string } = {
   'Todas': 'fas fa-star',
-  'NAVIDAD': 'fas fa-tree',
-  'AÑO NUEVO': 'fas fa-champagne-glasses',
   'CUMPLEAÑOS': 'fas fa-birthday-cake',
   'BODAS': 'fas fa-ring',
   'SAN VALENTIN': 'fas fa-heart',
-  'FIESTAS': 'fas fa-music',
+  'CARNAVAL': 'fas fa-masks-theater',
   'CORPORATIVO': 'fas fa-briefcase',
-  'Navidad': 'fas fa-tree',
-  'Año Nuevo': 'fas fa-champagne-glasses',
   'Cumpleaños': 'fas fa-birthday-cake',
   'Bodas': 'fas fa-ring',
   'San Valentín': 'fas fa-heart',
-  'Fiestas': 'fas fa-music',
+  'Carnaval': 'fas fa-masks-theater',
   'Corporativo': 'fas fa-briefcase',
-  'Día del Padre': 'fas fa-user-tie',
-  'Día de la Madre': 'fas fa-heart',
-  'Halloween': 'fas fa-ghost',
   'default': 'fas fa-gift'
 };
 
@@ -42,6 +35,7 @@ const PromocionesPage: React.FC = () => {
   // Estados
   const [promociones, setPromociones] = useState<Promocion[]>([]);
   const [categorias, setCategorias] = useState<CategoriaPromocion[]>([]);
+  const [loadingCategorias, setLoadingCategorias] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
@@ -67,27 +61,28 @@ const PromocionesPage: React.FC = () => {
   // Cargar categorías
   useEffect(() => {
     const cargarCategorias = async () => {
+      setLoadingCategorias(true);
       try {
         const data = await promocionesService.getCategorias();
         // Agregar opción "Todas" al inicio
-        const todasLasOfertas = data.reduce((sum, cat) => sum + cat.totalOfertas, 0);
+        const todasLasOfertas = data.reduce((sum, cat) => sum + (cat.totalOfertas || 0), 0);
         setCategorias([
           { id: 0, nombre: 'Todas', totalOfertas: todasLasOfertas },
           ...data
         ]);
       } catch (err) {
         console.error('Error cargando categorías:', err);
-        // Categorías de prueba
+        // Categorías de prueba si falla el backend
         setCategorias([
-          { id: 0, nombre: 'Todas', totalOfertas: 24 },
-          { id: 1, nombre: 'Navidad', totalOfertas: 8 },
-          { id: 2, nombre: 'Año Nuevo', totalOfertas: 6 },
-          { id: 3, nombre: 'Cumpleaños', totalOfertas: 5 },
-          { id: 4, nombre: 'Bodas', totalOfertas: 4 },
-          { id: 5, nombre: 'San Valentín', totalOfertas: 3 },
-          { id: 6, nombre: 'Fiestas', totalOfertas: 10 },
-          { id: 7, nombre: 'Corporativo', totalOfertas: 4 }
+          { id: 0, nombre: 'Todas', totalOfertas: 15 },
+          { id: 1, nombre: 'CUMPLEAÑOS', totalOfertas: 3 },
+          { id: 2, nombre: 'BODAS', totalOfertas: 3 },
+          { id: 3, nombre: 'SAN VALENTIN', totalOfertas: 3 },
+          { id: 4, nombre: 'CARNAVAL', totalOfertas: 3 },
+          { id: 5, nombre: 'CORPORATIVO', totalOfertas: 3 }
         ]);
+      } finally {
+        setLoadingCategorias(false);
       }
     };
     cargarCategorias();
@@ -261,9 +256,9 @@ const PromocionesPage: React.FC = () => {
       stock_disponible: 50,
       categoria_promocion: { id: 1, nombre: 'Navidad' },
       promocion_productos: [
-        { id: 1, cantidad: 1, es_regalo: false, producto: { id_producto: 'P001', descripcion: 'Johnnie Walker Black Label 750ml', imagen_url: '1.webp', volumen: 750, origen: 'Escocia' } },
-        { id: 2, cantidad: 1, es_regalo: false, producto: { id_producto: 'P002', descripcion: 'Vino Casillero del Diablo', imagen_url: '2.webp', volumen: 750, origen: 'Chile' } },
-        { id: 3, cantidad: 1, es_regalo: false, producto: { id_producto: 'P003', descripcion: 'Champagne Moët & Chandon', imagen_url: '3.webp', volumen: 750, origen: 'Francia' } }
+        { cantidad: 1, es_regalo: false, producto: { id_producto: 'P001', descripcion: 'Johnnie Walker Black Label 750ml', imagen_url: '1.webp', volumen: 750, origen: 'Escocia' } },
+        { cantidad: 1, es_regalo: false, producto: { id_producto: 'P002', descripcion: 'Vino Casillero del Diablo', imagen_url: '2.webp', volumen: 750, origen: 'Chile' } },
+        { cantidad: 1, es_regalo: false, producto: { id_producto: 'P003', descripcion: 'Champagne Moët & Chandon', imagen_url: '3.webp', volumen: 750, origen: 'Francia' } }
       ]
     },
     {
@@ -283,8 +278,8 @@ const PromocionesPage: React.FC = () => {
       stock_disponible: 30,
       categoria_promocion: { id: 2, nombre: 'Año Nuevo' },
       promocion_productos: [
-        { id: 4, cantidad: 2, es_regalo: false, producto: { id_producto: 'P004', descripcion: 'Chandon Brut 750ml', imagen_url: '4.webp', volumen: 750 } },
-        { id: 5, cantidad: 1, es_regalo: false, producto: { id_producto: 'P005', descripcion: 'Freixenet Carta Nevada', imagen_url: '5.webp', volumen: 750 } }
+        { cantidad: 2, es_regalo: false, producto: { id_producto: 'P004', descripcion: 'Chandon Brut 750ml', imagen_url: '4.webp', volumen: 750 } },
+        { cantidad: 1, es_regalo: false, producto: { id_producto: 'P005', descripcion: 'Freixenet Carta Nevada', imagen_url: '5.webp', volumen: 750 } }
       ]
     },
     {
@@ -304,8 +299,8 @@ const PromocionesPage: React.FC = () => {
       stock_disponible: 45,
       categoria_promocion: { id: 3, nombre: 'Cumpleaños' },
       promocion_productos: [
-        { id: 6, cantidad: 1, es_regalo: false, producto: { id_producto: 'P006', descripcion: 'Absolut Vodka 750ml', imagen_url: '6.webp', volumen: 750 } },
-        { id: 7, cantidad: 1, es_regalo: false, producto: { id_producto: 'P007', descripcion: 'Bacardí Blanco 750ml', imagen_url: '7.webp', volumen: 750 } }
+        { cantidad: 1, es_regalo: false, producto: { id_producto: 'P006', descripcion: 'Absolut Vodka 750ml', imagen_url: '6.webp', volumen: 750 } },
+        { cantidad: 1, es_regalo: false, producto: { id_producto: 'P007', descripcion: 'Bacardí Blanco 750ml', imagen_url: '7.webp', volumen: 750 } }
       ]
     },
     {
@@ -325,8 +320,8 @@ const PromocionesPage: React.FC = () => {
       stock_disponible: 25,
       categoria_promocion: { id: 5, nombre: 'San Valentín' },
       promocion_productos: [
-        { id: 8, cantidad: 1, es_regalo: false, producto: { id_producto: 'P008', descripcion: 'Vino Tinto Reserva', imagen_url: '8.webp', volumen: 750 } },
-        { id: 9, cantidad: 1, es_regalo: false, producto: { id_producto: 'P009', descripcion: 'Espumante Rosé', imagen_url: '9.webp', volumen: 750 } }
+        { cantidad: 1, es_regalo: false, producto: { id_producto: 'P008', descripcion: 'Vino Tinto Reserva', imagen_url: '8.webp', volumen: 750 } },
+        { cantidad: 1, es_regalo: false, producto: { id_producto: 'P009', descripcion: 'Espumante Rosé', imagen_url: '9.webp', volumen: 750 } }
       ]
     },
     {
@@ -346,8 +341,8 @@ const PromocionesPage: React.FC = () => {
       stock_disponible: 15,
       categoria_promocion: { id: 4, nombre: 'Bodas' },
       promocion_productos: [
-        { id: 10, cantidad: 6, es_regalo: false, producto: { id_producto: 'P010', descripcion: 'Champagne Veuve Clicquot', imagen_url: '10.webp', volumen: 750 } },
-        { id: 11, cantidad: 6, es_regalo: false, producto: { id_producto: 'P011', descripcion: 'Vino Blanco Premium', imagen_url: '11.webp', volumen: 750 } }
+        { cantidad: 6, es_regalo: false, producto: { id_producto: 'P010', descripcion: 'Champagne Veuve Clicquot', imagen_url: '10.webp', volumen: 750 } },
+        { cantidad: 6, es_regalo: false, producto: { id_producto: 'P011', descripcion: 'Vino Blanco Premium', imagen_url: '11.webp', volumen: 750 } }
       ]
     },
     {
@@ -367,8 +362,8 @@ const PromocionesPage: React.FC = () => {
       stock_disponible: 60,
       categoria_promocion: { id: 6, nombre: 'Fiestas' },
       promocion_productos: [
-        { id: 12, cantidad: 24, es_regalo: false, producto: { id_producto: 'P012', descripcion: 'Cervezas Premium Mix', imagen_url: '12.webp', volumen: 330 } },
-        { id: 13, cantidad: 1, es_regalo: false, producto: { id_producto: 'P013', descripcion: 'Jägermeister 700ml', imagen_url: '13.webp', volumen: 700 } }
+        { cantidad: 24, es_regalo: false, producto: { id_producto: 'P012', descripcion: 'Cervezas Premium Mix', imagen_url: '12.webp', volumen: 330 } },
+        { cantidad: 1, es_regalo: false, producto: { id_producto: 'P013', descripcion: 'Jägermeister 700ml', imagen_url: '13.webp', volumen: 700 } }
       ]
     },
     {
@@ -388,9 +383,9 @@ const PromocionesPage: React.FC = () => {
       stock_disponible: 40,
       categoria_promocion: { id: 7, nombre: 'Corporativo' },
       promocion_productos: [
-        { id: 14, cantidad: 1, es_regalo: false, producto: { id_producto: 'P014', descripcion: 'Johnnie Walker Blue Label', imagen_url: '1.webp', volumen: 750 } },
-        { id: 15, cantidad: 1, es_regalo: false, producto: { id_producto: 'P015', descripcion: 'Chivas Regal 18 años', imagen_url: '2.webp', volumen: 750 } },
-        { id: 16, cantidad: 1, es_regalo: false, producto: { id_producto: 'P016', descripcion: 'Glenfiddich 15 años', imagen_url: '3.webp', volumen: 750 } }
+        { cantidad: 1, es_regalo: false, producto: { id_producto: 'P014', descripcion: 'Johnnie Walker Blue Label', imagen_url: '1.webp', volumen: 750 } },
+        { cantidad: 1, es_regalo: false, producto: { id_producto: 'P015', descripcion: 'Chivas Regal 18 años', imagen_url: '2.webp', volumen: 750 } },
+        { cantidad: 1, es_regalo: false, producto: { id_producto: 'P016', descripcion: 'Glenfiddich 15 años', imagen_url: '3.webp', volumen: 750 } }
       ]
     },
     {
@@ -410,8 +405,8 @@ const PromocionesPage: React.FC = () => {
       stock_disponible: 30,
       categoria_promocion: { id: 7, nombre: 'Corporativo' },
       promocion_productos: [
-        { id: 17, cantidad: 1, es_regalo: false, producto: { id_producto: 'P017', descripcion: 'Moët & Chandon Imperial', imagen_url: '4.webp', volumen: 750 } },
-        { id: 18, cantidad: 1, es_regalo: false, producto: { id_producto: 'P018', descripcion: 'Johnnie Walker Black Label', imagen_url: '5.webp', volumen: 750 } }
+        { cantidad: 1, es_regalo: false, producto: { id_producto: 'P017', descripcion: 'Moët & Chandon Imperial', imagen_url: '4.webp', volumen: 750 } },
+        { cantidad: 1, es_regalo: false, producto: { id_producto: 'P018', descripcion: 'Johnnie Walker Black Label', imagen_url: '5.webp', volumen: 750 } }
       ]
     },
     {
@@ -431,9 +426,9 @@ const PromocionesPage: React.FC = () => {
       stock_disponible: 55,
       categoria_promocion: { id: 6, nombre: 'Fiestas' },
       promocion_productos: [
-        { id: 19, cantidad: 1, es_regalo: false, producto: { id_producto: 'P019', descripcion: 'Ron Barceló Imperial', imagen_url: '6.webp', volumen: 1000 } },
-        { id: 20, cantidad: 1, es_regalo: false, producto: { id_producto: 'P020', descripcion: 'Absolut Vodka', imagen_url: '7.webp', volumen: 1000 } },
-        { id: 21, cantidad: 1, es_regalo: false, producto: { id_producto: 'P021', descripcion: 'Tequila José Cuervo', imagen_url: '8.webp', volumen: 750 } }
+        { cantidad: 1, es_regalo: false, producto: { id_producto: 'P019', descripcion: 'Ron Barceló Imperial', imagen_url: '6.webp', volumen: 1000 } },
+        { cantidad: 1, es_regalo: false, producto: { id_producto: 'P020', descripcion: 'Absolut Vodka', imagen_url: '7.webp', volumen: 1000 } },
+        { cantidad: 1, es_regalo: false, producto: { id_producto: 'P021', descripcion: 'Tequila José Cuervo', imagen_url: '8.webp', volumen: 750 } }
       ]
     },
     {
@@ -453,7 +448,7 @@ const PromocionesPage: React.FC = () => {
       stock_disponible: 75,
       categoria_promocion: { id: 6, nombre: 'Fiestas' },
       promocion_productos: [
-        { id: 22, cantidad: 12, es_regalo: false, producto: { id_producto: 'P022', descripcion: 'Cerveza Pilsener', imagen_url: '9.webp', volumen: 330 } }
+        { cantidad: 12, es_regalo: false, producto: { id_producto: 'P022', descripcion: 'Cerveza Pilsener', imagen_url: '9.webp', volumen: 330 } }
       ]
     }
   ];
@@ -481,9 +476,9 @@ const PromocionesPage: React.FC = () => {
           </div>
 
           <div className="occasions-grid">
-            {categorias.map((cat) => (
+            {(categorias || []).map((cat) => (
               <div
-                key={cat.id}
+                key={`cat-${cat.id || cat.nombre}`}
                 className={`occasion-card ${(categoriaActiva === cat.nombre) || (cat.id === 0 && categoriaActiva === null) ? 'active' : ''}`}
                 onClick={() => handleCategoriaClick(cat)}
               >
@@ -573,9 +568,9 @@ const PromocionesPage: React.FC = () => {
             </div>
           ) : (
             <div className="promos-grid">
-              {promociones.map((promo, index) => (
+              {(promociones || []).map((promo, index) => (
                 <article 
-                  key={promo.id} 
+                  key={promo.id || `promo-${index}`}
                   className="promo-pack"
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
@@ -583,9 +578,9 @@ const PromocionesPage: React.FC = () => {
                   
                   <div className="promo-pack__image">
                     <div className="promo-pack__products">
-                      {promo.promocion_productos?.slice(0, 3).map((pp, i) => (
-                        <div key={pp.producto.id_producto} className="promo-pack__product-icon" title={pp.producto.descripcion}>
-                          {pp.producto.imagen_url ? (
+                      {(promo.promocion_productos || []).slice(0, 3).map((pp, i) => (
+                        <div key={`${promo.id}-prod-${pp.producto?.id_producto || i}`} className="promo-pack__product-icon" title={pp.producto?.descripcion}>
+                          {pp.producto?.imagen_url ? (
                             <img 
                               src={getImagenProductoUrl(pp.producto.imagen_url)} 
                               alt={pp.producto.descripcion}
@@ -595,7 +590,7 @@ const PromocionesPage: React.FC = () => {
                               }}
                             />
                           ) : null}
-                          <i className={`${getBottleIcon(pp.producto.volumen || 750)} ${pp.producto.imagen_url ? 'hidden' : ''}`}></i>
+                          <i className={`${getBottleIcon(pp.producto?.volumen || 750)} ${pp.producto?.imagen_url ? 'hidden' : ''}`}></i>
                         </div>
                       ))}
                     </div>
@@ -611,11 +606,11 @@ const PromocionesPage: React.FC = () => {
                     <div className="promo-pack__includes">
                       <p className="promo-pack__includes-title">Incluye:</p>
                       <ul className="promo-pack__includes-list">
-                        {promo.promocion_productos?.map((pp, i) => (
-                          <li key={pp.producto.id_producto} title={pp.producto.descripcion}>
+                        {(promo.promocion_productos || []).map((pp, i) => (
+                          <li key={`${promo.id}-item-${pp.producto?.id_producto || i}`} title={pp.producto?.descripcion}>
                             <i className="fas fa-check"></i>
-                            {pp.cantidad > 1 ? `${pp.cantidad} ` : ''}{pp.producto.descripcion}
-                            {pp.producto.origen && <span className="origen-flag">{getBandera(pp.producto.origen)}</span>}
+                            {pp.cantidad > 1 ? `${pp.cantidad} ` : ''}{pp.producto?.descripcion || 'Producto'}
+                            {pp.producto?.origen && <span className="origen-flag">{getBandera(pp.producto.origen)}</span>}
                             {pp.es_regalo && <span className="regalo-tag">🎁 Regalo</span>}
                           </li>
                         ))}
