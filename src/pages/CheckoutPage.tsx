@@ -18,7 +18,7 @@ const CheckoutPage: React.FC = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [alertType, setAlertType] = useState<'success' | 'error'>('success');
   const [alertMessage, setAlertMessage] = useState('');
-  
+  const [pagoExitoso, setPagoExitoso] = useState(false); // Flag para evitar redirect después de pago
   // Tab de método de pago: 'paypal' o 'tarjeta'
   const [activeTab, setActiveTab] = useState<'paypal' | 'tarjeta'>('paypal');
   
@@ -38,6 +38,9 @@ const CheckoutPage: React.FC = () => {
 
   // Verificar autenticación y carrito
   useEffect(() => {
+    // Si el pago fue exitoso, no hacer nada (está en proceso de redirect)
+    if (pagoExitoso) return;
+
     if (!isAuthenticated) {
       navigate('/login', { state: { from: '/checkout' } });
       return;
@@ -60,7 +63,7 @@ const CheckoutPage: React.FC = () => {
     }
 
     setLoadingData(false);
-  }, [isAuthenticated, carritoId, items, navigate]);
+  }, [isAuthenticated, carritoId, items, navigate, pagoExitoso]);
 
   const mostrarAlerta = (mensaje: string, tipo: 'success' | 'error') => {
     setAlertMessage(mensaje);
@@ -143,15 +146,19 @@ const CheckoutPage: React.FC = () => {
       });
 
       if (response.status === 'success') {
+        setPagoExitoso(true); // Marcar pago exitoso ANTES de limpiar
         mostrarAlerta('¡Pago realizado con éxito!', 'success');
+        
+        // Guardar factura para la página de confirmación
+        const facturaData = response.data;
+        
         limpiarCarrito();
         localStorage.removeItem('carritoCheckout');
         
-        setTimeout(() => {
-          navigate('/confirmacion-pedido', {
-            state: { factura: response.data }
-          });
-        }, 2000);
+        // Navegar inmediatamente a confirmación
+        navigate('/confirmacion-pedido', {
+          state: { factura: facturaData }
+        });
       }
     } catch (error: any) {
       console.error('Error en pago:', error);
@@ -186,18 +193,23 @@ const CheckoutPage: React.FC = () => {
       );
 
       if (response.status === 'success') {
+        setPagoExitoso(true); // Marcar pago exitoso ANTES de limpiar
         mostrarAlerta('¡Pago con PayPal exitoso!', 'success');
+        
+        // Guardar datos para la página de confirmación
+        const facturaData = response.data?.factura;
+        const transaccionId = data.orderID;
+        
         limpiarCarrito();
         localStorage.removeItem('carritoCheckout');
         
-        setTimeout(() => {
-          navigate('/confirmacion-pedido', {
-            state: { 
-              factura: response.data?.factura,
-              transaccion: data.orderID
-            }
-          });
-        }, 2000);
+        // Navegar inmediatamente a confirmación
+        navigate('/confirmacion-pedido', {
+          state: { 
+            factura: facturaData,
+            transaccion: transaccionId
+          }
+        });
       }
     } catch (error: any) {
       console.error('Error capturando pago PayPal:', error);

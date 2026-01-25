@@ -610,7 +610,6 @@ const PromocionesPage: React.FC = () => {
                           <li key={`${promo.id}-item-${pp.producto?.id_producto || i}`} title={pp.producto?.descripcion}>
                             <i className="fas fa-check"></i>
                             {pp.cantidad > 1 ? `${pp.cantidad} ` : ''}{pp.producto?.descripcion || 'Producto'}
-                            {pp.producto?.origen && <span className="origen-flag">{getBandera(pp.producto.origen)}</span>}
                             {pp.es_regalo && <span className="regalo-tag">🎁 Regalo</span>}
                           </li>
                         ))}

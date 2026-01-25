@@ -88,13 +88,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, onVerDetalle }) => 
         <i className={`fa${enFavoritos ? 's' : 'r'} fa-heart`} aria-hidden="true"></i>
       </button>
 
-      {/* Imagen con overlay - Botón accesible */}
+      {/* Imagen con overlay - Solo clickeable, no en tab order */}
       <div className="product-card__image">
-        <button
+        <div
           className="product-card__image-btn"
           onClick={() => onVerDetalle(producto)}
-          aria-label={`Ver detalles de ${producto.descripcion}`}
-          type="button"
+          role="button"
+          tabIndex={-1}
+          aria-hidden="true"
         >
           <img 
             src={imagenUrl} 
@@ -104,15 +105,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, onVerDetalle }) => 
               e.currentTarget.src = PLACEHOLDER_PRODUCTO;
             }}
           />
-        </button>
+        </div>
         
-        {/* Hover Overlay */}
+        {/* Hover Overlay - No en tab order */}
         <div className="product-card__overlay" aria-hidden="true">
           <button 
             className="product-card__ver-detalle"
             onClick={() => onVerDetalle(producto)}
-            tabIndex={-1}
             type="button"
+            tabIndex={-1}
           >
             <i className="fas fa-eye" aria-hidden="true"></i>
             <span>Ver Detalle</span>
@@ -127,12 +128,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, onVerDetalle }) => 
           <span className="product-card__marca">{producto.marca.nombre}</span>
         )}
 
-        {/* Nombre - Botón accesible en lugar de h3 clickeable */}
+        {/* Nombre - Clickeable pero no en tab order */}
         <h3 className="product-card__nombre">
           <button
             className="product-card__nombre-btn"
             onClick={() => onVerDetalle(producto)}
             type="button"
+            tabIndex={-1}
+            aria-hidden="true"
           >
             {producto.descripcion}
           </button>
@@ -155,13 +158,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, onVerDetalle }) => 
           )}
         </div>
 
-        {/* Stock indicator */}
-        {enStock && producto.saldo_actual && producto.saldo_actual <= 5 && (
-          <p className="product-card__stock-bajo" role="alert" aria-live="polite">
-            <i className="fas fa-exclamation-circle" aria-hidden="true"></i>
-            ¡Últimas {producto.saldo_actual} unidades!
-          </p>
-        )}
+        {/* Stock indicator - Removed */}
       </div>
 
       {/* Acciones */}

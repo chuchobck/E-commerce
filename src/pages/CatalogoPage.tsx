@@ -142,20 +142,23 @@ const CatalogoPage: React.FC = () => {
       // Hay más productos si la página actual es menor al total de páginas
       setHayMasProductos(paginaACargar < totalPaginas);
     } catch (err: any) {
-  console.error('❌ ERROR cargando productos:', err);
-  console.error('❌ ERROR details:', err.response?.data || err.message);
-  setError(`Error al cargar productos: ${err.response?.data?.error || err.message}`);
-
-  if (reset) {
-    console.warn('⚠️  Usando productos de prueba por error en backend');
-    setProductos(getProductosDePrueba());
-    setTotalProductos(8);
-    setHayMasProductos(false);
-  }
-} finally {
-  setLoading(false);
-  setLoadingMore(false);
-}
+      console.error('❌ ERROR cargando productos:', err);
+      console.error('❌ ERROR details:', err.response?.data || err.message);
+      
+      // Si es 404, significa que no hay productos con esos filtros, no es un error grave
+      if (err.response?.status === 404) {
+        setProductos([]);
+        setTotalProductos(0);
+        setHayMasProductos(false);
+        setError(null); // No mostrar error, solo el mensaje de "no hay productos"
+      } else {
+        // Para otros errores, mostrar mensaje amigable
+        setError('No pudimos cargar los productos. Por favor, intenta de nuevo.');
+      }
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
   }, [filtros, paginaActual, loading, loadingMore, productosPorPagina]);
 
   useEffect(() => {
@@ -202,7 +205,6 @@ const CatalogoPage: React.FC = () => {
       } catch (err) {
         // Filtros estáticos de fallback
         setFiltrosDinamicos({
-          origenes: ['Escocia', 'Estados Unidos', 'México', 'España', 'Francia'],
           volumenes: [350, 700, 750, 1000, 1750],
           alcoholRango: { min: 5, max: 50 },
           precioRango: { min: 10, max: 500 }
@@ -219,7 +221,8 @@ const CatalogoPage: React.FC = () => {
     if (filtros.marcaId) params.set('marcaId', filtros.marcaId.toString());
     if (filtros.busqueda) params.set('busqueda', filtros.busqueda);
     if (filtros.ordenarPor) params.set('ordenarPor', filtros.ordenarPor);
-    setSearchParams(params);
+    // Usar replace para no llenar el historial con cada cambio de filtro
+    setSearchParams(params, { replace: true });
   }, [filtros, setSearchParams]);
 
   // Handlers
@@ -254,114 +257,9 @@ const CatalogoPage: React.FC = () => {
     setModalAbierto(true);
   };
 
-  // Datos de prueba (cuando no hay backend)
-  const getProductosDePrueba = (): Producto[] => [
-    {
-      id_producto: 'P001',
-      descripcion: 'Johnnie Walker Black Label 12 Años',
-      precio_venta: 45.99,
-      precio_regular: 55.00,
-      volumen: 750,
-      alcohol_vol: 40,
-      origen: 'Escocia',
-      notas_cata: 'Notas ahumadas con toques de vainilla y caramelo',
-      saldo_actual: 15,
-      estado: 'ACT',
-      marca: { id_marca: 1, nombre: 'Johnnie Walker', id_categoria: 1, estado: 'ACT' }
-    },
-    {
-      id_producto: 'P002',
-      descripcion: 'Jack Daniels Tennessee Whiskey',
-      precio_venta: 38.50,
-      volumen: 700,
-      alcohol_vol: 40,
-      origen: 'Estados Unidos',
-      saldo_actual: 8,
-      estado: 'ACT',
-      marca: { id_marca: 2, nombre: 'Jack Daniels', id_categoria: 1, estado: 'ACT' }
-    },
-    {
-      id_producto: 'P003',
-      descripcion: 'Glenfiddich 15 Años Solera',
-      precio_venta: 89.99,
-      precio_regular: 99.99,
-      volumen: 750,
-      alcohol_vol: 40,
-      origen: 'Escocia',
-      notas_cata: 'Frutas maduras, especias y miel con un final sedoso',
-      saldo_actual: 5,
-      estado: 'ACT',
-      marca: { id_marca: 3, nombre: 'Glenfiddich', id_categoria: 1, estado: 'ACT' }
-    },
-    {
-      id_producto: 'P004',
-      descripcion: 'Chivas Regal 12 Años',
-      precio_venta: 42.00,
-      volumen: 750,
-      alcohol_vol: 40,
-      origen: 'Escocia',
-      saldo_actual: 20,
-      estado: 'ACT',
-      marca: { id_marca: 4, nombre: 'Chivas Regal', id_categoria: 1, estado: 'ACT' }
-    },
-    {
-      id_producto: 'P005',
-      descripcion: 'Bacardi Carta Blanca',
-      precio_venta: 18.99,
-      volumen: 750,
-      alcohol_vol: 37.5,
-      origen: 'Puerto Rico',
-      saldo_actual: 30,
-      estado: 'ACT',
-      marca: { id_marca: 5, nombre: 'Bacardí', id_categoria: 4, estado: 'ACT' }
-    },
-    {
-      id_producto: 'P006',
-      descripcion: 'Absolut Vodka Original',
-      precio_venta: 24.50,
-      volumen: 700,
-      alcohol_vol: 40,
-      origen: 'Suecia',
-      saldo_actual: 25,
-      estado: 'ACT',
-      marca: { id_marca: 6, nombre: 'Absolut', id_categoria: 5, estado: 'ACT' }
-    },
-    {
-      id_producto: 'P007',
-      descripcion: 'Jose Cuervo Especial Gold',
-      precio_venta: 22.00,
-      volumen: 750,
-      alcohol_vol: 38,
-      origen: 'México',
-      saldo_actual: 0,
-      estado: 'ACT',
-      marca: { id_marca: 7, nombre: 'Jose Cuervo', id_categoria: 6, estado: 'ACT' }
-    },
-    {
-      id_producto: 'P008',
-      descripcion: 'Casillero del Diablo Cabernet Sauvignon',
-      precio_venta: 12.99,
-      volumen: 750,
-      alcohol_vol: 13.5,
-      origen: 'Chile',
-      notas_cata: 'Aromas a frutas rojas maduras con notas de vainilla',
-      saldo_actual: 40,
-      estado: 'ACT',
-      marca: { id_marca: 8, nombre: 'Casillero del Diablo', id_categoria: 2, estado: 'ACT' }
-    },
-  ];
 
-  // Categorías de prueba si no hay datos
-  const categoriasDefault: Categoria[] = [
-    { id_categoria_producto: 1, nombre: 'Whisky', activo: true },
-    { id_categoria_producto: 2, nombre: 'Vinos', activo: true },
-    { id_categoria_producto: 3, nombre: 'Cervezas', activo: true },
-    { id_categoria_producto: 4, nombre: 'Ron', activo: true },
-    { id_categoria_producto: 5, nombre: 'Vodka', activo: true },
-    { id_categoria_producto: 6, nombre: 'Tequila', activo: true },
-  ];
 
-  const categoriasAMostrar = categorias.length > 0 ? categorias : categoriasDefault;
+
 
   return (
     <div className="catalogo-page">
@@ -420,7 +318,7 @@ const CatalogoPage: React.FC = () => {
             <div className="catalog-layout">
               {/* Sidebar Filtros */}
               <CatalogFilters
-                categorias={categoriasAMostrar}
+                categorias={categorias}
                 marcas={marcas}
                 filtros={filtros}
                 filtrosDinamicos={filtrosDinamicos}
@@ -449,9 +347,7 @@ const CatalogoPage: React.FC = () => {
 
                 {/* Toolbar */}
                 <div className="catalog-toolbar">
-                  <p className="catalog-toolbar__results" aria-live="polite" aria-atomic="true">
-                    Mostrando <strong>{productos.length}</strong> de <strong>{totalProductos}</strong> productos
-                  </p>
+                  {/* Toolbar vacío o se puede agregar otro contenido */}
                 </div>
 
                 {/* Loading State */}
@@ -503,7 +399,7 @@ const CatalogoPage: React.FC = () => {
                     {!hayMasProductos && productos.length > 0 && (
                       <div className="catalog-end-message" role="status">
                         <i className="fas fa-check-circle" aria-hidden="true"></i>
-                        <p>Has visto todos los productos ({totalProductos} en total)</p>
+                        <p>Ya viste todos los productos</p>
                       </div>
                     )}
                   </>

@@ -1,11 +1,16 @@
 // ==================== TIPOS PARA CATÁLOGO ====================
 
 export interface Categoria {
-  id_categoria_producto?: number;
+  id_prod_categoria?: number; // Campo del backend/Prisma
+  id_categoria_producto?: number; // Alias
   id_categoria?: number; // Alias
   nombre: string;
   descripcion?: string;
   activo?: boolean;
+  _count?: {
+    producto?: number;
+    marca?: number;
+  };
 }
 
 export interface Marca {
@@ -73,7 +78,7 @@ export interface ProductosResponse {
 }
 
 export interface FiltrosDinamicos {
-  origenes: string[];
+  origenes?: string[];
   volumenes: number[];
   alcoholRango: { min: number; max: number };
   precioRango: { min: number; max: number };

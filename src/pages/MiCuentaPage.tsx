@@ -13,24 +13,44 @@ const MiCuentaPage: React.FC = () => {
   
   // Estado del formulario de perfil - Se sincroniza con los datos del usuario
   const [formData, setFormData] = useState({
-    nombre: '',
-    apellido: '',
+    nombre1: '',
+    nombre2: '',
+    apellido1: '',
+    apellido2: '',
     telefono: '',
     celular: '',
+    email: '',
     direccion: '',
     ruc_cedula: '',
+    id_ciudad: '',
   });
+
+  // Estado para cambio de contraseña
+  const [passwordData, setPasswordData] = useState({
+    passwordActual: '',
+    passwordNueva: '',
+    passwordConfirm: '',
+  });
+  
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [savingPassword, setSavingPassword] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   // ✅ Sincronizar datos del usuario al cargar o cuando cambie el usuario
   React.useEffect(() => {
-    if (user) {
+    if (user && user.cliente) {
       setFormData({
-        nombre: user.cliente?.nombre1 || '',
-        apellido: user.cliente?.apellido1 || '',
-        telefono: user.cliente?.telefono || '',
-        celular: user.cliente?.celular || '',
-        direccion: user.cliente?.direccion || '',
-        ruc_cedula: user.cliente?.ruc_cedula || '',
+        nombre1: user.cliente.nombre1 || '',
+        nombre2: user.cliente.nombre2 || '',
+        apellido1: user.cliente.apellido1 || '',
+        apellido2: user.cliente.apellido2 || '',
+        telefono: user.cliente.telefono || '',
+        celular: user.cliente.celular || '',
+        email: user.cliente.email || '',
+        direccion: user.cliente.direccion || '',
+        ruc_cedula: user.cliente.ruc_cedula || '',
+        id_ciudad: user.cliente.id_ciudad || '',
       });
     }
   }, [user]);
@@ -47,11 +67,112 @@ const MiCuentaPage: React.FC = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSaveProfile = (e: React.FormEvent) => {
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setPasswordData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implementar actualización de perfil con API
-    setEditMode(false);
-    alert('Perfil actualizado correctamente');
+    setErrorMessage('');
+    setSuccessMessage('');
+
+    // Validaciones
+    if (!passwordData.passwordActual || !passwordData.passwordNueva || !passwordData.passwordConfirm) {
+      setErrorMessage('Todos los campos son obligatorios');
+      return;
+    }
+
+    if (passwordData.passwordNueva.length < 6) {
+      setErrorMessage('La nueva contraseña debe tener al menos 6 caracteres');
+      return;
+    }
+
+    if (passwordData.passwordNueva !== passwordData.passwordConfirm) {
+      setErrorMessage('Las contraseñas no coinciden');
+      return;
+    }
+
+    try {
+      setSavingPassword(true);
+
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:3000/api/v1'}/auth/cambiar-password`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('barbox_token')}`
+        },
+        body: JSON.stringify({
+          passwordActual: passwordData.passwordActual,
+          passwordNueva: passwordData.passwordNueva
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.status === 'success') {
+        setSuccessMessage('Contraseña actualizada correctamente');
+        setPasswordData({
+          passwordActual: '',
+          passwordNueva: '',
+          passwordConfirm: '',
+        });
+      } else {
+        setErrorMessage(data.message || 'Error al cambiar la contraseña');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setErrorMessage('Error al cambiar la contraseña');
+    } finally {
+      setSavingPassword(false);
+    }
+  };
+
+  const handleSaveProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user?.cliente?.id_cliente) return;
+
+    try {
+      setSavingProfile(true);
+      setErrorMessage('');
+      setSuccessMessage('');
+
+      // Llamar al endpoint de actualización de cliente
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:3000/api/v1'}/clientes/${user.cliente.id_cliente}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('barbox_token')}`
+        },
+        body: JSON.stringify({
+          nombre1: formData.nombre1,
+          nombre2: formData.nombre2 || null,
+          apellido1: formData.apellido1,
+          apellido2: formData.apellido2 || null,
+          telefono: formData.telefono || null,
+          celular: formData.celular || null,
+          email: formData.email || null,
+          direccion: formData.direccion || null,
+          id_ciudad: formData.id_ciudad || null,
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.status === 'success') {
+        setSuccessMessage('Perfil actualizado correctamente');
+        setEditMode(false);
+        // Recargar datos del usuario
+        window.location.reload();
+      } else {
+        setErrorMessage(data.message || 'Error al actualizar perfil');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setErrorMessage('Error al actualizar el perfil');
+    } finally {
+      setSavingProfile(false);
+    }
   };
 
   const handleLogout = () => {
@@ -76,7 +197,7 @@ const MiCuentaPage: React.FC = () => {
                 <i className="fas fa-user"></i>
               </div>
               <div className="cuenta-hero__info">
-                <h1>¡Hola, {user.cliente?.nombre1 || 'Usuario'}!</h1>
+                <h1>¡Hola, {user.usuario || 'Usuario'}!</h1>
                 <p>Gestiona tu cuenta y preferencias</p>
               </div>
             </div>
@@ -94,7 +215,7 @@ const MiCuentaPage: React.FC = () => {
                   <button 
                     className={`cuenta-nav__item ${activeTab === 'perfil' ? 'active' : ''}`}
                     onClick={() => setActiveTab('perfil')}
-                    tabIndex={0}
+                   
                     aria-current={activeTab === 'perfil' ? 'page' : undefined}
                   >
                     <i className="fas fa-user-circle"></i>
@@ -103,7 +224,7 @@ const MiCuentaPage: React.FC = () => {
                   <button 
                     className={`cuenta-nav__item ${activeTab === 'seguridad' ? 'active' : ''}`}
                     onClick={() => setActiveTab('seguridad')}
-                    tabIndex={0}
+                   
                     aria-current={activeTab === 'seguridad' ? 'page' : undefined}
                   >
                     <i className="fas fa-shield-alt"></i>
@@ -113,8 +234,8 @@ const MiCuentaPage: React.FC = () => {
                     className="cuenta-nav__item"
                     onClick={() => navigate('/mis-pedidos')}
                   >
-                    <i className="fas fa-box"></i>
-                    <span>Mis Pedidos</span>
+                    <i className="fas fa-shopping-bag"></i>
+                    <span>Mis Compras</span>
                   </button>
                   <button 
                     className="cuenta-nav__item"
@@ -155,30 +276,71 @@ const MiCuentaPage: React.FC = () => {
                       )}
                     </div>
 
+                    {successMessage && (
+                      <div className="alert alert-success" style={{ marginBottom: '20px', padding: '15px', background: '#d4edda', color: '#155724', borderRadius: '8px' }}>
+                        <i className="fas fa-check-circle"></i> {successMessage}
+                      </div>
+                    )}
+                    
+                    {errorMessage && (
+                      <div className="alert alert-error" style={{ marginBottom: '20px', padding: '15px', background: '#f8d7da', color: '#721c24', borderRadius: '8px' }}>
+                        <i className="fas fa-exclamation-circle"></i> {errorMessage}
+                      </div>
+                    )}
+
                     <form onSubmit={handleSaveProfile} className="cuenta-form">
                       <div className="form-row">
                         <div className="form-group">
-                          <label htmlFor="nombre">Nombre</label>
+                          <label htmlFor="nombre1">Primer Nombre *</label>
                           <input
                             type="text"
-                            id="nombre"
-                            name="nombre"
-                            value={formData.nombre}
+                            id="nombre1"
+                            name="nombre1"
+                            value={formData.nombre1}
                             onChange={handleInputChange}
                             disabled={!editMode}
-                            placeholder="Tu nombre"
+                            placeholder="Primer nombre"
+                            required
                           />
                         </div>
                         <div className="form-group">
-                          <label htmlFor="apellido">Apellido</label>
+                          <label htmlFor="nombre2">Segundo Nombre</label>
                           <input
                             type="text"
-                            id="apellido"
-                            name="apellido"
-                            value={formData.apellido}
+                            id="nombre2"
+                            name="nombre2"
+                            value={formData.nombre2}
                             onChange={handleInputChange}
                             disabled={!editMode}
-                            placeholder="Tu apellido"
+                            placeholder="Segundo nombre"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="form-row">
+                        <div className="form-group">
+                          <label htmlFor="apellido1">Primer Apellido *</label>
+                          <input
+                            type="text"
+                            id="apellido1"
+                            name="apellido1"
+                            value={formData.apellido1}
+                            onChange={handleInputChange}
+                            disabled={!editMode}
+                            placeholder="Primer apellido"
+                            required
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label htmlFor="apellido2">Segundo Apellido</label>
+                          <input
+                            type="text"
+                            id="apellido2"
+                            name="apellido2"
+                            value={formData.apellido2}
+                            onChange={handleInputChange}
+                            disabled={!editMode}
+                            placeholder="Segundo apellido"
                           />
                         </div>
                       </div>
@@ -211,6 +373,19 @@ const MiCuentaPage: React.FC = () => {
                       </div>
 
                       <div className="form-group">
+                        <label htmlFor="email">Correo Electrónico</label>
+                        <input
+                          type="email"
+                          id="email"
+                          name="email"
+                          value={formData.email}
+                          onChange={handleInputChange}
+                          disabled={!editMode}
+                          placeholder="tu@email.com"
+                        />
+                      </div>
+
+                      <div className="form-group">
                         <label htmlFor="ruc_cedula">Cédula / RUC</label>
                         <input
                           type="text"
@@ -225,7 +400,7 @@ const MiCuentaPage: React.FC = () => {
                       </div>
 
                       <div className="form-group">
-                        <label htmlFor="direccion">Dirección</label>
+                        <label htmlFor="direccion">Dirección de Entrega</label>
                         <input
                           type="text"
                           id="direccion"
@@ -233,7 +408,7 @@ const MiCuentaPage: React.FC = () => {
                           value={formData.direccion}
                           onChange={handleInputChange}
                           disabled={!editMode}
-                          placeholder="Tu dirección de entrega"
+                          placeholder="Calle principal, número de casa, referencias"
                         />
                       </div>
 
@@ -242,13 +417,30 @@ const MiCuentaPage: React.FC = () => {
                           <button 
                             type="button" 
                             className="btn-secondary"
-                            onClick={() => setEditMode(false)}
+                            onClick={() => {
+                              setEditMode(false);
+                              setErrorMessage('');
+                              setSuccessMessage('');
+                            }}
                           >
                             Cancelar
                           </button>
-                          <button type="submit" className="btn-primary">
-                            <i className="fas fa-save"></i>
-                            Guardar Cambios
+                          <button 
+                            type="submit" 
+                            className="btn-primary"
+                            disabled={savingProfile}
+                          >
+                            {savingProfile ? (
+                              <>
+                                <i className="fas fa-spinner fa-spin"></i>
+                                Guardando...
+                              </>
+                            ) : (
+                              <>
+                                <i className="fas fa-save"></i>
+                                Guardar Cambios
+                              </>
+                            )}
                           </button>
                         </div>
                       )}
@@ -266,18 +458,88 @@ const MiCuentaPage: React.FC = () => {
                       </h2>
                     </div>
 
-                    <div className="security-options">
-                      <div className="security-item">
-                        <div className="security-item__info">
-                          <h3>Cambiar Contraseña</h3>
-                          <p>Actualiza tu contraseña periódicamente para mayor seguridad</p>
-                        </div>
-                        <button className="btn-outline">
-                          <i className="fas fa-key"></i>
-                          Cambiar
+                    {successMessage && (
+                      <div className="alert alert-success" style={{ marginBottom: '20px', padding: '15px', background: '#d4edda', color: '#155724', borderRadius: '8px' }}>
+                        <i className="fas fa-check-circle"></i> {successMessage}
+                      </div>
+                    )}
+                    
+                    {errorMessage && (
+                      <div className="alert alert-error" style={{ marginBottom: '20px', padding: '15px', background: '#f8d7da', color: '#721c24', borderRadius: '8px' }}>
+                        <i className="fas fa-exclamation-circle"></i> {errorMessage}
+                      </div>
+                    )}
+
+                    <form onSubmit={handleChangePassword} className="cuenta-form">
+                      <div className="security-info" style={{ padding: '15px', background: '#e7f3ff', borderRadius: '8px', marginBottom: '25px' }}>
+                        <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '8px' }}>
+                          <i className="fas fa-info-circle"></i> Cambiar Contraseña
+                        </h3>
+                        <p style={{ fontSize: '14px', color: '#666', margin: 0 }}>
+                          Actualiza tu contraseña periódicamente para mantener tu cuenta segura
+                        </p>
+                      </div>
+
+                      <div className="form-group">
+                        <label htmlFor="passwordActual">Contraseña Actual *</label>
+                        <input
+                          type="password"
+                          id="passwordActual"
+                          name="passwordActual"
+                          value={passwordData.passwordActual}
+                          onChange={handlePasswordChange}
+                          placeholder="Ingresa tu contraseña actual"
+                          required
+                        />
+                      </div>
+
+                      <div className="form-group">
+                        <label htmlFor="passwordNueva">Nueva Contraseña *</label>
+                        <input
+                          type="password"
+                          id="passwordNueva"
+                          name="passwordNueva"
+                          value={passwordData.passwordNueva}
+                          onChange={handlePasswordChange}
+                          placeholder="Mínimo 6 caracteres"
+                          required
+                        />
+                        <small className="field-hint">La contraseña debe tener al menos 6 caracteres</small>
+                      </div>
+
+                      <div className="form-group">
+                        <label htmlFor="passwordConfirm">Confirmar Nueva Contraseña *</label>
+                        <input
+                          type="password"
+                          id="passwordConfirm"
+                          name="passwordConfirm"
+                          value={passwordData.passwordConfirm}
+                          onChange={handlePasswordChange}
+                          placeholder="Repite la nueva contraseña"
+                          required
+                        />
+                      </div>
+
+                      <div className="form-actions">
+                        <button 
+                          type="submit" 
+                          className="btn-primary"
+                          disabled={savingPassword}
+                        >
+                          {savingPassword ? (
+                            <>
+                              <i className="fas fa-spinner fa-spin"></i>
+                              Actualizando...
+                            </>
+                          ) : (
+                            <>
+                              <i className="fas fa-key"></i>
+                              Actualizar Contraseña
+                            </>
+                          )}
                         </button>
                       </div>
-                    </div>
+                    </form>
                   </div>
                 )}
 
@@ -293,3 +555,4 @@ const MiCuentaPage: React.FC = () => {
 };
 
 export default MiCuentaPage;
+

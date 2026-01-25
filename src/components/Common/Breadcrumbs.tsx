@@ -27,7 +27,7 @@ const routeLabels: Record<string, { label: string; iconKey: IconKey }> = {
   'login': { label: 'Iniciar Sesión', iconKey: 'login' },
   'register': { label: 'Registro', iconKey: 'user' },
   'cuenta': { label: 'Mi Cuenta', iconKey: 'user' },
-  'pedidos': { label: 'Mis Pedidos', iconKey: 'package' },
+  'pedidos': { label: 'Mis Compras', iconKey: 'package' },
   'favoritos': { label: 'Favoritos', iconKey: 'heart' },
   'buscar': { label: 'Búsqueda', iconKey: 'search' },
   'ofertas': { label: 'Ofertas', iconKey: 'tag' },

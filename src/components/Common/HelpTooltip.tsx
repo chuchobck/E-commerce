@@ -118,7 +118,7 @@ const HelpTooltip: React.FC<HelpTooltipProps> = ({
       onMouseLeave={handleMouseLeave}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
-      tabIndex={0}
+     
       role="button"
       aria-expanded={isVisible}
       aria-describedby={isVisible ? 'help-tooltip-content' : undefined}
@@ -266,3 +266,4 @@ export const FAQ: React.FC<FAQProps> = ({ items, title = 'Preguntas Frecuentes' 
 };
 
 export default HelpTooltip;
+

@@ -452,10 +452,7 @@ input[type="checkbox"] {
   padding: 30px;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  position: sticky;
-  top: 100px;
-  max-height: calc(100vh - 120px);
-  overflow-y: auto;
+  height: fit-content;
 }
 
 .order-summary h2 {
@@ -1055,92 +1052,20 @@ input[type="checkbox"] {
 }
 
 /* ==========================================
-   SUCURSAL SELECTOR
+   LOADING SCREEN
    ========================================== */
-.sucursal-selector {
+.loading-screen {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-}
-
-.sucursal-option {
-  display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 15px 20px;
-  background: white;
-  border: 2px solid var(--color-borde, #e0e0e0);
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.3s ease;
+  justify-content: center;
+  min-height: 400px;
+  gap: 20px;
 }
 
-.sucursal-option:hover {
-  border-color: var(--color-principal, #C75040);
-  background: #fdf8f7;
-}
-
-.sucursal-option.selected {
-  border-color: var(--color-principal, #C75040);
-  background: linear-gradient(135deg, #fdf8f7 0%, #fff 100%);
-  box-shadow: 0 2px 8px rgba(199, 80, 64, 0.15);
-}
-
-.sucursal-option input[type="radio"] {
-  display: none;
-}
-
-.sucursal-radio {
-  width: 22px;
-  height: 22px;
-  border: 2px solid var(--color-borde, #ccc);
-  border-radius: 50%;
-  position: relative;
-  transition: all 0.3s ease;
-  flex-shrink: 0;
-}
-
-.sucursal-option.selected .sucursal-radio {
-  border-color: var(--color-principal, #C75040);
-}
-
-.sucursal-option.selected .sucursal-radio::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 12px;
-  height: 12px;
-  background: var(--color-principal, #C75040);
-  border-radius: 50%;
-}
-
-.sucursal-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 0.95rem;
-  color: var(--color-texto, #333);
-}
-
-.sucursal-info i {
-  color: var(--color-principal, #C75040);
-  font-size: 1.1rem;
-}
-
-.sucursal-option.selected .sucursal-info {
-  font-weight: 600;
-}
-
-@media (max-width: 768px) {
-  .sucursal-option {
-    padding: 12px 15px;
-  }
-  
-  .sucursal-info {
-    font-size: 0.85rem;
-  }
+.loading-screen p {
+  color: #666;
+  font-size: 16px;
 }
 
 /* ==========================================
@@ -1399,8 +1324,7 @@ input[type="checkbox"] {
 }
 
 .cart-items {
-  max-height: 250px;
-  overflow-y: auto;
+  /* Sin scroll - se expande con el contenido */
 }
 
 /* ==========================================

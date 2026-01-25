@@ -29,7 +29,7 @@ import './App.css';
 // 💳 Configuración de PayPal
 // Client ID de PayPal Sandbox
 const paypalOptions = {
-  clientId: 'AfGp5jxXRKenpi8f5NlR2moHR_wYnipsih8-rau1FuAQ_snLKkjXdemMDxmKZofxq3oF52CArkY3cOG3',
+  clientId: 'AS6D0zcPMVvNOtc0IxDNQDyHzIZewqKfLrOVELOSKB8A_zrho0TaWThxPF6tLJm0Havv4XYVQdFHogpj',
   currency: 'USD',
   intent: 'capture',
 };

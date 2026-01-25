@@ -191,6 +191,9 @@
   border-radius: 20px;
   padding: 2rem;
   box-shadow: 0 4px 20px rgba(42, 23, 22, 0.08);
+  /* Asegurar que no haya scroll interno - solo scroll global del navegador */
+  height: auto;
+  overflow: visible;
 }
 
 .cart-items__header {
@@ -460,6 +463,9 @@
   box-shadow: 0 4px 20px rgba(42, 23, 22, 0.08);
   position: sticky;
   top: 100px;
+  /* Sin scroll interno - solo scroll global del navegador */
+  height: auto;
+  overflow: visible;
 }
 
 .summary-title {

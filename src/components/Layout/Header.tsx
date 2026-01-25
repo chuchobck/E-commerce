@@ -107,7 +107,7 @@ const Header: React.FC = () => {
           <div className="header-main__wrapper">
             {/* Logo */}
             <div className="header-main__logo">
-              <Link to="/" className="logo" aria-label="BARBOX - Ir al inicio">
+              <Link to="/" className="logo" aria-label="BARBOX - Ir al inicio" tabIndex={0}>
                 <i className="fas fa-wine-glass-alt logo__icon" aria-hidden="true"></i>
                 <span className="logo__text">BARBOX</span>
               </Link>
@@ -204,12 +204,13 @@ const Header: React.FC = () => {
                 className="header-action" 
                 aria-label="Ayuda y atajos de teclado"
                 type="button"
+                tabIndex={0}
               >
                 <i className="fas fa-question-circle" aria-hidden="true"></i>
                 <span className="header-action__text">Ayuda</span>
               </button>
 
-              <Link to="/favoritos" className="header-action" aria-label={`Mis favoritos${totalFavoritos > 0 ? `, ${totalFavoritos} productos` : ''}`}>
+              <Link to="/favoritos" className="header-action" aria-label={`Mis favoritos${totalFavoritos > 0 ? `, ${totalFavoritos} productos` : ''}`} tabIndex={0}>
                 <i className="fas fa-heart" aria-hidden="true"></i>
                 {totalFavoritos > 0 && (
                   <span className="header-action__badge" aria-hidden="true">{totalFavoritos}</span>
@@ -219,30 +220,36 @@ const Header: React.FC = () => {
 
               {isAuthenticated ? (
                 <div className="header-action header-action--dropdown">
-                  <div className="header-action__trigger">
+                  <button 
+                    className="header-action__trigger"
+                    type="button"
+                    aria-haspopup="true"
+                    aria-label={`Menú de usuario: ${user?.usuario || 'Cuenta'}`}
+                    tabIndex={0}
+                  >
                     <i className="fas fa-user" aria-hidden="true"></i>
-                    <span className="header-action__text">{user?.cliente?.nombre1 || 'Cuenta'}</span>
-                  </div>
+                    <span className="header-action__text">{user?.usuario || 'Cuenta'}</span>
+                  </button>
                   <div className="header-dropdown" role="menu" aria-label="Menú de usuario">
-                    <Link to="/mi-cuenta" className="header-dropdown__item" role="menuitem">
+                    <Link to="/mi-cuenta" className="header-dropdown__item" role="menuitem" tabIndex={0}>
                       <i className="fas fa-user-circle" aria-hidden="true"></i> Mi Perfil
                     </Link>
-                    <Link to="/mis-pedidos" className="header-dropdown__item" role="menuitem">
-                      <i className="fas fa-box" aria-hidden="true"></i> Mis Pedidos
+                    <Link to="/mis-pedidos" className="header-dropdown__item" role="menuitem" tabIndex={0}>
+                      <i className="fas fa-shopping-bag" aria-hidden="true"></i> Mis Compras
                     </Link>
-                    <button onClick={logout} className="header-dropdown__item header-dropdown__item--danger" role="menuitem" type="button">
+                    <button onClick={logout} className="header-dropdown__item header-dropdown__item--danger" role="menuitem" type="button" tabIndex={0}>
                       <i className="fas fa-sign-out-alt" aria-hidden="true"></i> Cerrar Sesión
                     </button>
                   </div>
                 </div>
               ) : (
-                <Link to="/login" className="header-action" aria-label="Iniciar sesión">
+                <Link to="/login" className="header-action" aria-label="Iniciar sesión" tabIndex={0}>
                   <i className="fas fa-user" aria-hidden="true"></i>
                   <span className="header-action__text">Cuenta</span>
                 </Link>
               )}
 
-              <Link to="/carrito" className="header-action" aria-label={`Carrito de compras${totalItems > 0 ? `, ${totalItems} productos` : ', vacío'}`}>
+              <Link to="/carrito" className="header-action" aria-label={`Carrito de compras${totalItems > 0 ? `, ${totalItems} productos` : ', vacío'}`} tabIndex={0}>
                 <i className="fas fa-shopping-cart" aria-hidden="true"></i>
                 {totalItems > 0 && (
                   <span className="header-action__badge" aria-hidden="true">{totalItems}</span>
@@ -251,7 +258,7 @@ const Header: React.FC = () => {
               </Link>
             </div>
 
-            {/* Mobile Menu Toggle */}
+            {/* Mobile Menu Toggle - Solo visible en móvil */}
             <button
               className={`header-main__toggle ${menuAbierto ? 'active' : ''}`}
               onClick={() => setMenuAbierto(!menuAbierto)}
@@ -277,13 +284,13 @@ const Header: React.FC = () => {
         <div className="container">
           <ul className="categories-list" role="menubar">
             <li className="categories-list__item" role="none">
-              <Link to="/" className="categories-list__link" role="menuitem">
+              <Link to="/" className="categories-list__link" role="menuitem" tabIndex={0}>
                 <i className="fas fa-home" aria-hidden="true"></i>
                 <span>Inicio</span>
               </Link>
             </li>
             <li className="categories-list__item" role="none">
-              <Link to="/promociones" className="categories-list__link" role="menuitem">
+              <Link to="/promociones" className="categories-list__link" role="menuitem" tabIndex={0}>
                 <i className="fas fa-tags" aria-hidden="true"></i>
                 <span>Promociones</span>
               </Link>
@@ -306,6 +313,7 @@ const Header: React.FC = () => {
                 role="menuitem"
                 aria-haspopup="menu"
                 aria-expanded={categoriasAbiertas}
+                tabIndex={0}
               >
                 <i className="fas fa-wine-bottle" aria-hidden="true"></i>
                 <span>Catálogo</span>
@@ -321,26 +329,27 @@ const Header: React.FC = () => {
                         className="categories-dropdown__item"
                         role="menuitem"
                         onClick={handleCategoriaClick}
+                        tabIndex={0}
                       >
                         <i className={`fas ${cat.icono}`} aria-hidden="true"></i>
                         <span>{cat.nombre}</span>
                       </Link>
                     ))}
                   </div>
-                  <Link to="/catalogo" className="categories-dropdown__all" role="menuitem" onClick={handleCategoriaClick}>
+                  <Link to="/catalogo" className="categories-dropdown__all" role="menuitem" onClick={handleCategoriaClick} tabIndex={0}>
                     Ver todo el catálogo <i className="fas fa-arrow-right" aria-hidden="true"></i>
                   </Link>
                 </div>
               )}
             </li>
             <li className="categories-list__item" role="none">
-              <Link to="/acerca" className="categories-list__link" role="menuitem">
+              <Link to="/acerca" className="categories-list__link" role="menuitem" tabIndex={0}>
                 <i className="fas fa-info-circle" aria-hidden="true"></i>
                 <span>Nosotros</span>
               </Link>
             </li>
             <li className="categories-list__item" role="none">
-              <Link to="/contacto" className="categories-list__link" role="menuitem">
+              <Link to="/contacto" className="categories-list__link" role="menuitem" tabIndex={0}>
                 <i className="fas fa-envelope" aria-hidden="true"></i>
                 <span>Contacto</span>
               </Link>
@@ -359,3 +368,4 @@ const Header: React.FC = () => {
 };
 
 export default Header;
+

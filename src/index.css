@@ -95,6 +95,12 @@ a, button {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
 }
 
+/* WCAG 2.4.7 - Focus visible para navegación con teclado */
+:focus-visible {
+  outline: 3px solid #C75040 !important;
+  outline-offset: 2px !important;
+}
+
 /* Smooth scroll */
 html {
   scroll-behavior: smooth;

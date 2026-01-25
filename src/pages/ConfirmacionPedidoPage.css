@@ -1,7 +1,16 @@
 .confirmacion-page {
-  min-height: 60vh;
+  min-height: 100vh;
   padding: 60px 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.confirmacion-page .container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .confirmacion-card {
@@ -12,13 +21,14 @@
   padding: 50px 40px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   text-align: center;
+  overflow: visible;
 }
 
 .confirmacion-icon {
   width: 100px;
   height: 100px;
   margin: 0 auto 30px;
-  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -51,6 +61,8 @@
   padding: 30px;
   margin-bottom: 30px;
   animation: fadeInUp 0.6s ease-out 0.3s both;
+  overflow: visible;
+  max-height: none;
 }
 
 .detail-row {
@@ -79,7 +91,7 @@
 
 .detail-row.total-row .detail-value {
   font-size: 24px;
-  color: #667eea;
+  color: #d4af37;
 }
 
 .detail-divider {
@@ -94,6 +106,11 @@
   font-size: 14px;
   font-weight: 600;
   text-transform: uppercase;
+}
+
+.badge-success {
+  background: #d5f4e6;
+  color: #27ae60;
 }
 
 .badge-PENDIENTE {
@@ -130,7 +147,7 @@
 
 .confirmacion-info i {
   font-size: 24px;
-  color: #667eea;
+  color: #d4af37;
   flex-shrink: 0;
   margin-top: 2px;
 }
@@ -144,12 +161,14 @@
 
 .confirmacion-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 15px;
   animation: fadeInUp 0.6s ease-out 0.5s both;
 }
 
 .confirmacion-actions button {
   flex: 1;
+  min-width: 180px;
   padding: 15px 25px;
   border: none;
   border-radius: 10px;
@@ -164,24 +183,25 @@
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);
+  color: #1a1a1a;
+  font-weight: 700;
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 10px 25px rgba(212, 175, 55, 0.4);
 }
 
 .btn-secondary {
   background: white;
-  color: #667eea;
-  border: 2px solid #667eea;
+  color: #d4af37;
+  border: 2px solid #d4af37;
 }
 
 .btn-secondary:hover {
-  background: #667eea;
-  color: white;
+  background: #d4af37;
+  color: #1a1a1a;
   transform: translateY(-2px);
 }
 
@@ -222,5 +242,6 @@
 
   .confirmacion-actions button {
     width: 100%;
+    min-width: 100%;
   }
 }

@@ -24,21 +24,47 @@ const CatalogFilters: React.FC<CatalogFiltersProps> = ({
   isOpen,
   onClose,
 }) => {
+  // Función auxiliar para obtener el ID de categoría de forma consistente
+  // El backend puede devolver id_prod_categoria, id_categoria_producto o id_categoria
+  const getCategoriaId = (cat: Categoria): number => {
+    return cat.id_prod_categoria || cat.id_categoria_producto || cat.id_categoria || 0;
+  };
+
   const handleCategoriaChange = (categoriaId: number | undefined) => {
+    console.log('🔄 Cambiando categoría a:', categoriaId);
     onFiltrosChange({
-      categoriaId,
-      marcaId: undefined // Reset marca cuando cambia categoría
+      categoriaId: categoriaId,
+      marcaId: undefined,
+      busqueda: undefined
     });
   };
 
   const handleMarcaChange = (marcaId: number | undefined) => {
-    onFiltrosChange({ marcaId });
+    onFiltrosChange({ 
+      marcaId: marcaId,
+      busqueda: undefined
+    });
   };
 
-  const handleOrigenChange = (origen: string) => {
-    onFiltrosChange({
-      origen: filtros.origen === origen ? undefined : origen
-    });
+  const handleCategoriaClick = (e: React.MouseEvent, categoriaId: number | undefined) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // Evitar clics múltiples
+    const target = e.currentTarget as HTMLElement;
+    if (target.dataset.processing === 'true') return;
+    target.dataset.processing = 'true';
+    
+    handleCategoriaChange(categoriaId);
+    
+    setTimeout(() => {
+      target.dataset.processing = 'false';
+    }, 300);
+  };
+
+  const handleMarcaClick = (e: React.MouseEvent, marcaId: number | undefined) => {
+    e.preventDefault();
+    e.stopPropagation();
+    handleMarcaChange(marcaId);
   };
 
   const handleEnStockChange = () => {
@@ -47,7 +73,7 @@ const CatalogFilters: React.FC<CatalogFiltersProps> = ({
 
   const tieneFiltrosActivos = () => {
     return filtros.categoriaId || filtros.marcaId || filtros.precioMin ||
-      filtros.precioMax || filtros.volumen || filtros.origen || filtros.enStock;
+      filtros.precioMax || filtros.volumen || filtros.enStock;
   };
 
   return (
@@ -81,27 +107,33 @@ const CatalogFilters: React.FC<CatalogFiltersProps> = ({
           <div className="filter-options">
             <div
               className={`filter-option ${!filtros.categoriaId ? 'active' : ''}`}
-              onClick={() => handleCategoriaChange(undefined)}
-              tabIndex={0}
+              onClick={(e) => handleCategoriaClick(e, undefined)}
+             
               role="button"
+              aria-pressed={!filtros.categoriaId}
               onKeyDown={(e) => e.key === 'Enter' && handleCategoriaChange(undefined)}
             >
               <span className="filter-radio"></span>
               <span>Todas las categorías</span>
             </div>
-            {categorias.map((cat) => (
-              <div
-                key={cat.id_categoria_producto}
-                className={`filter-option ${filtros.categoriaId === cat.id_categoria_producto ? 'active' : ''}`}
-                onClick={() => handleCategoriaChange(cat.id_categoria_producto)}
-                tabIndex={0}
-                role="button"
-                onKeyDown={(e) => e.key === 'Enter' && handleCategoriaChange(cat.id_categoria_producto)}
-              >
-                <span className="filter-radio"></span>
-                <span>{cat.nombre}</span>
-              </div>
-            ))}
+            {categorias.map((cat) => {
+              const catId = getCategoriaId(cat);
+              const isActive = filtros.categoriaId === catId;
+              return (
+                <div
+                  key={catId}
+                  className={`filter-option ${isActive ? 'active' : ''}`}
+                  onClick={(e) => handleCategoriaClick(e, catId)}
+                 
+                  role="button"
+                  aria-pressed={isActive}
+                  onKeyDown={(e) => e.key === 'Enter' && handleCategoriaChange(catId)}
+                >
+                  <span className="filter-radio"></span>
+                  <span>{cat.nombre}</span>
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -124,8 +156,8 @@ const CatalogFilters: React.FC<CatalogFiltersProps> = ({
             <div className="filter-options filter-options--marcas">
               <div
                 className={`filter-option ${!filtros.marcaId ? 'active' : ''}`}
-                onClick={() => handleMarcaChange(undefined)}
-                tabIndex={0}
+                onClick={(e) => handleMarcaClick(e, undefined)}
+               
                 role="button"
                 onKeyDown={(e) => e.key === 'Enter' && handleMarcaChange(undefined)}
               >
@@ -135,8 +167,8 @@ const CatalogFilters: React.FC<CatalogFiltersProps> = ({
                 <div
                   key={marca.id_marca}
                   className={`filter-option filter-option--marca ${filtros.marcaId === marca.id_marca ? 'active' : ''}`}
-                  onClick={() => handleMarcaChange(marca.id_marca)}
-                  tabIndex={0}
+                  onClick={(e) => handleMarcaClick(e, marca.id_marca)}
+                 
                   role="button"
                   onKeyDown={(e) => e.key === 'Enter' && handleMarcaChange(marca.id_marca)}
                 >
@@ -173,9 +205,14 @@ const CatalogFilters: React.FC<CatalogFiltersProps> = ({
                 value={filtros.precioMin || ''}
                 onChange={(e) => {
                   const valor = e.target.value ? parseFloat(e.target.value) : undefined;
-                  onFiltrosChange({ precioMin: valor });
+                  // Validar que no sea 0 o negativo
+                  if (valor && valor > 0) {
+                    onFiltrosChange({ precioMin: valor });
+                  } else if (!e.target.value) {
+                    onFiltrosChange({ precioMin: undefined });
+                  }
                 }}
-                min="0"
+                min="0.01"
                 step="0.01"
               />
             </div>
@@ -184,19 +221,30 @@ const CatalogFilters: React.FC<CatalogFiltersProps> = ({
               <label><span className="currency-label">$</span> Hasta</label>
               <input
                 type="number"
-                className="price-input-field"
+                className={`price-input-field ${filtros.precioMin && filtros.precioMax && filtros.precioMax < filtros.precioMin ? 'price-error' : ''}`}
                 placeholder="Sin límite"
                 value={filtros.precioMax || ''}
                 onChange={(e) => {
                   const valor = e.target.value ? parseFloat(e.target.value) : undefined;
-                  onFiltrosChange({ precioMax: valor });
+                  // Validar que no sea 0 o negativo
+                  if (valor && valor > 0) {
+                    onFiltrosChange({ precioMax: valor });
+                  } else if (!e.target.value) {
+                    onFiltrosChange({ precioMax: undefined });
+                  }
                 }}
-                min="0"
+                min="0.01"
                 step="0.01"
               />
             </div>
           </div>
-          {(filtros.precioMin || filtros.precioMax) && (
+          {filtros.precioMin && filtros.precioMax && filtros.precioMax < filtros.precioMin && (
+            <div className="price-error-message">
+              <i className="fas fa-exclamation-circle"></i>
+              <span>El precio máximo debe ser mayor al mínimo</span>
+            </div>
+          )}
+          {(filtros.precioMin || filtros.precioMax) && !(filtros.precioMin && filtros.precioMax && filtros.precioMax < filtros.precioMin) && (
             <div className="price-active-filter">
               <i className="fas fa-check-circle"></i>
               <span>
@@ -211,29 +259,6 @@ const CatalogFilters: React.FC<CatalogFiltersProps> = ({
           )}
         </div>
 
-        {/* ORIGEN (dinámico) */}
-        {filtrosDinamicos?.origenes && filtrosDinamicos.origenes.length > 0 && (
-          <div className="filter-section">
-            <h4 className="filter-title">
-              <i className="fas fa-globe-americas"></i>
-              Origen
-            </h4>
-            <div className="filter-chips filter-chips--wrap">
-              {filtrosDinamicos.origenes.map((origen) => (
-                <button
-                  key={origen}
-                  className={`filter-chip ${filtros.origen === origen ? 'active' : ''}`}
-                  onClick={() => handleOrigenChange(origen)}
-                  tabIndex={0}
-                >
-                  {origen}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-
         {/* Aplicar filtros (Mobile) */}
         <div className="filters-apply-mobile">
           <button className="btn-aplicar" onClick={onClose}>
@@ -246,3 +271,4 @@ const CatalogFilters: React.FC<CatalogFiltersProps> = ({
 };
 
 export default CatalogFilters;
+

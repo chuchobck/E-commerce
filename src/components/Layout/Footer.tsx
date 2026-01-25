@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './Footer.css';
 
 const Footer: React.FC = () => {
@@ -78,7 +78,7 @@ const Footer: React.FC = () => {
               <ul className="contact-list">
                 <li>
                   <i className="fab fa-whatsapp" aria-hidden="true"></i>
-                  <a href="https://wa.me/593991730968" target="_blank" rel="noopener noreferrer" tabIndex={0} aria-label="Contactar por WhatsApp al +593 99 173 0968">
+                  <a href="https://wa.me/593991730968" target="_blank" rel="noopener noreferrer" aria-label="Contactar por WhatsApp al +593 99 173 0968" tabIndex={0}>
                     +593 99 173 0968
                   </a>
                 </li>
@@ -97,11 +97,11 @@ const Footer: React.FC = () => {
             <div className="footer-col">
               <h3 className="footer-title">Navegación</h3>
               <ul className="footer-list">
-                <li><Link to="/" tabIndex={0}>Inicio</Link></li>
-                <li><Link to="/catalogo" tabIndex={0}>Catálogo</Link></li>
-                <li><Link to="/promociones" tabIndex={0}>Promociones</Link></li>
-                <li><Link to="/contacto" tabIndex={0}>Contacto</Link></li>
-                <li><Link to="/acerca" tabIndex={0}>Nosotros</Link></li>
+                <li><a href="/" onClick={handleLinkClick('/')} tabIndex={0}>Inicio</a></li>
+                <li><a href="/catalogo" onClick={handleLinkClick('/catalogo')} tabIndex={0}>Catálogo</a></li>
+                <li><a href="/promociones" onClick={handleLinkClick('/promociones')} tabIndex={0}>Promociones</a></li>
+                <li><a href="/carrito" onClick={handleLinkClick('/carrito')} tabIndex={0}>Carrito</a></li>
+                <li><a href="/favoritos" onClick={handleLinkClick('/favoritos')} tabIndex={0}>Favoritos</a></li>
               </ul>
             </div>
 
@@ -109,12 +109,13 @@ const Footer: React.FC = () => {
             <div className="footer-col">
               <h3 className="footer-title">Categorías</h3>
               <ul className="footer-list">
-                <li><Link to="/catalogo?categoriaId=1" tabIndex={0}>Whisky</Link></li>
-                <li><Link to="/catalogo?categoriaId=2" tabIndex={0}>Vinos</Link></li>
-                <li><Link to="/catalogo?categoriaId=3" tabIndex={0}>Cervezas</Link></li>
-                <li><Link to="/catalogo?categoriaId=4" tabIndex={0}>Ron</Link></li>
-                <li><Link to="/catalogo?categoriaId=5" tabIndex={0}>Vodka</Link></li>
-                <li><Link to="/catalogo" tabIndex={0}>Ver todo</Link></li>
+                <li><a href="/catalogo?categoriaId=1" onClick={handleLinkClick('/catalogo?categoriaId=1')} tabIndex={0}>Vino</a></li>
+                <li><a href="/catalogo?categoriaId=2" onClick={handleLinkClick('/catalogo?categoriaId=2')} tabIndex={0}>Ron</a></li>
+                <li><a href="/catalogo?categoriaId=3" onClick={handleLinkClick('/catalogo?categoriaId=3')} tabIndex={0}>Vodka</a></li>
+                <li><a href="/catalogo?categoriaId=4" onClick={handleLinkClick('/catalogo?categoriaId=4')} tabIndex={0}>Whisky</a></li>
+                <li><a href="/catalogo?categoriaId=5" onClick={handleLinkClick('/catalogo?categoriaId=5')} tabIndex={0}>Cerveza</a></li>
+                <li><a href="/catalogo?categoriaId=6" onClick={handleLinkClick('/catalogo?categoriaId=6')} tabIndex={0}>Cocteles</a></li>
+                <li><a href="/catalogo" onClick={handleLinkClick('/catalogo')} tabIndex={0}>Ver todo</a></li>
               </ul>
             </div>
 
@@ -122,12 +123,12 @@ const Footer: React.FC = () => {
             <div className="footer-col">
               <h3 className="footer-title">Mi Cuenta</h3>
               <ul className="footer-list">
-                <li><Link to="/login" tabIndex={0}>Iniciar Sesión</Link></li>
-                <li><Link to="/register" tabIndex={0}>Registrarse</Link></li>
-                <li><Link to="/mi-cuenta" tabIndex={0}>Mi Perfil</Link></li>
-                <li><Link to="/mis-pedidos" tabIndex={0}>Mis Pedidos</Link></li>
-                <li><Link to="/carrito" tabIndex={0}>Mi Carrito</Link></li>
-                <li><Link to="/favoritos" tabIndex={0}>Favoritos</Link></li>
+                <li><a href="/login" onClick={handleLinkClick('/login')} tabIndex={0}>Iniciar Sesión</a></li>
+                <li><a href="/register" onClick={handleLinkClick('/register')} tabIndex={0}>Registrarse</a></li>
+                <li><a href="/mi-cuenta" onClick={handleLinkClick('/mi-cuenta')} tabIndex={0}>Mi Perfil</a></li>
+                <li><a href="/mis-pedidos" onClick={handleLinkClick('/mis-pedidos')} tabIndex={0}>Mis Compras</a></li>
+                <li><a href="/carrito" onClick={handleLinkClick('/carrito')} tabIndex={0}>Mi Carrito</a></li>
+                <li><a href="/favoritos" onClick={handleLinkClick('/favoritos')} tabIndex={0}>Favoritos</a></li>
               </ul>
             </div>
 
@@ -150,6 +151,7 @@ const Footer: React.FC = () => {
                   required
                   aria-required="true"
                   autoComplete="email"
+                  tabIndex={0}
                 />
                 <button type="submit" aria-label="Suscribirse al newsletter" tabIndex={0}>
                   <i className="fas fa-paper-plane" aria-hidden="true"></i>
@@ -201,3 +203,4 @@ const Footer: React.FC = () => {
 };
 
 export default Footer;
+

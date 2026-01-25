@@ -307,10 +307,10 @@ const CarritoPage: React.FC = () => {
               </div>
             ) : (
               <div className="cart-layout">
-                {/* Left: Resumen de compra (items) */}
+                {/* Left: Resumen del pedido (items) */}
                 <div className="cart-items">
                   <div className="cart-items__header">
-                    <h2>Resumen de compra</h2>
+                    <h2>Resumen del Pedido</h2>
                     <button className="btn-text" onClick={handleVaciarCarrito}>
                       <i className="fas fa-trash"></i>
                       Vaciar carrito
@@ -374,6 +374,7 @@ const CarritoPage: React.FC = () => {
                             className="qty-btn"
                             onClick={() => handleCantidadChange(item.producto.id_producto, item.cantidad - 1)}
                             aria-label="Disminuir cantidad"
+                            tabIndex={0}
                           >
                             <i className="fas fa-minus"></i>
                           </button>
@@ -385,11 +386,13 @@ const CarritoPage: React.FC = () => {
                             min="1" 
                             max="99"
                             aria-label="Cantidad"
+                            tabIndex={0}
                           />
                           <button 
                             className="qty-btn"
                             onClick={() => handleCantidadChange(item.producto.id_producto, item.cantidad + 1)}
                             aria-label="Aumentar cantidad"
+                            tabIndex={0}
                           >
                             <i className="fas fa-plus"></i>
                           </button>
@@ -415,6 +418,7 @@ const CarritoPage: React.FC = () => {
                             className="btn-remove"
                             onClick={() => handleEliminar(item.producto.id_producto)}
                             aria-label="Eliminar producto"
+                            tabIndex={0}
                           >
                             <i className="fas fa-times"></i>
                           </button>

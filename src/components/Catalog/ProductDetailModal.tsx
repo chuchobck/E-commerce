@@ -52,7 +52,7 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ producto, isOpe
   return (
     <div className="modal-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="modal-title">
       <div className="product-modal" onClick={(e) => e.stopPropagation()}>
-        <button className="modal-close" onClick={onClose} tabIndex={0} aria-label="Cerrar modal">
+        <button className="modal-close" onClick={onClose} aria-label="Cerrar modal">
           <i className="fas fa-times"></i>
         </button>
 
@@ -130,7 +130,7 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ producto, isOpe
                   <button 
                     onClick={() => setCantidad(Math.max(1, cantidad - 1))}
                     disabled={cantidad <= 1}
-                    tabIndex={0}
+                   
                     aria-label="Reducir cantidad"
                   >
                     <i className="fas fa-minus"></i>
@@ -139,7 +139,7 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ producto, isOpe
                   <button 
                     onClick={() => setCantidad(Math.min(producto.saldo_actual || 10, cantidad + 1))}
                     disabled={cantidad >= (producto.saldo_actual || 10)}
-                    tabIndex={0}
+                   
                     aria-label="Aumentar cantidad"
                   >
                     <i className="fas fa-plus"></i>
@@ -151,7 +151,7 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ producto, isOpe
                 className={`btn-agregar ${enCarrito ? 'en-carrito' : ''}`}
                 onClick={handleAgregarCarrito}
                 disabled={!enStock}
-                tabIndex={0}
+               
                 aria-label={enCarrito ? 'Ya está en el carrito' : 'Agregar al carrito'}
               >
                 <i className={`fas fa-${enCarrito ? 'check' : 'cart-plus'}`}></i>
@@ -161,7 +161,7 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ producto, isOpe
               <button 
                 className={`btn-favorito ${enFavoritos ? 'active' : ''}`}
                 onClick={() => toggleFavorito(producto.id_producto)}
-                tabIndex={0}
+               
                 aria-label={enFavoritos ? 'Quitar de favoritos' : 'Agregar a favoritos'}
               >
                 <i className={`fa${enFavoritos ? 's' : 'r'} fa-heart`}></i>
@@ -187,3 +187,4 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({ producto, isOpe
 };
 
 export default ProductDetailModal;
+

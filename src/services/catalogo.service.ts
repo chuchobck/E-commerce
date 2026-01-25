@@ -69,14 +69,14 @@ export const catalogoService = {
       const params = new URLSearchParams();
       
       if (filtros) {
-        if (filtros.categoriaId) params.append('categoria', filtros.categoriaId.toString());
+        if (filtros.categoriaId) params.append('categoriaId', filtros.categoriaId.toString());
         if (filtros.marcaId) params.append('marcaId', filtros.marcaId.toString());
         if (filtros.precioMin) params.append('precioMin', filtros.precioMin.toString());
         if (filtros.precioMax) params.append('precioMax', filtros.precioMax.toString());
         if (filtros.volumen) params.append('volumen', filtros.volumen);
-        if (filtros.origen) params.append('origen', filtros.origen);
         if (filtros.enStock !== undefined) params.append('soloDisponibles', filtros.enStock.toString());
-        if (filtros.busqueda) params.append('busqueda', filtros.busqueda);
+        // 🔍 Cambiar 'busqueda' a 'descripcion' para que coincida con el backend
+        if (filtros.busqueda) params.append('descripcion', filtros.busqueda);
         if (filtros.ordenarPor) params.append('ordenarPor', filtros.ordenarPor);
         if (filtros.pagina) params.append('pagina', filtros.pagina.toString());
         if (filtros.limite) params.append('limite', filtros.limite.toString());
@@ -121,12 +121,23 @@ export const catalogoService = {
 
   // ==================== FILTROS DINÁMICOS ====================
   async getFiltrosDinamicos(categoria?: string, marcaId?: number): Promise<FiltrosDinamicos> {
-    const params = new URLSearchParams();
-    if (categoria) params.append('categoria', categoria);
-    if (marcaId) params.append('marcaId', marcaId.toString());
-    
-    const response = await api.get<{ data: FiltrosDinamicos }>(`/productos/filtros?${params.toString()}`);
-    return response.data.data;
+    try {
+      const params = new URLSearchParams();
+      if (categoria) params.append('categoriaId', categoria);
+      if (marcaId) params.append('marcaId', marcaId.toString());
+      
+      const response = await api.get<{ data: FiltrosDinamicos }>(`/productos/filtros?${params.toString()}`);
+      return response.data.data;
+    } catch (error) {
+      // Si el endpoint no existe o falla, retornar filtros por defecto
+      console.warn('⚠️ Endpoint de filtros dinámicos no disponible, usando valores por defecto');
+      return {
+        origenes: ['Escocia', 'Estados Unidos', 'México', 'España', 'Francia', 'Chile', 'Argentina'],
+        volumenes: [350, 700, 750, 1000, 1750],
+        alcoholRango: { min: 5, max: 50 },
+        precioRango: { min: 1, max: 500 }
+      };
+    }
   },
 
   // ==================== PRODUCTOS DESTACADOS ====================

@@ -248,6 +248,29 @@
   font-weight: 600;
 }
 
+/* Price Error Styles */
+.price-input-field.price-error {
+  border-color: #dc3545;
+  background-color: rgba(220, 53, 69, 0.05);
+}
+
+.price-error-message {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(220, 53, 69, 0.1);
+  border-left: 3px solid #dc3545;
+  border-radius: 6px;
+  color: #dc3545;
+  font-size: 0.8rem;
+}
+
+.price-error-message i {
+  font-size: 0.85rem;
+}
+
 /* Filter Chips */
 .filter-chips {
   display: flex;

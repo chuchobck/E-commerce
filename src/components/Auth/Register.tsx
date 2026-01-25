@@ -511,7 +511,6 @@ const Register: React.FC = () => {
               className="toggle-password-modern"
               onClick={() => setShowPassword(!showPassword)}
               aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-              tabIndex={-1}
             >
               <i className={`fas fa-eye${showPassword ? '-slash' : ''}`}></i>
             </button>
@@ -587,7 +586,6 @@ const Register: React.FC = () => {
               className="toggle-password-modern"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               aria-label={showConfirmPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-              tabIndex={-1}
             >
               <i className={`fas fa-eye${showConfirmPassword ? '-slash' : ''}`}></i>
             </button>

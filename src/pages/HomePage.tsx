@@ -1,31 +1,19 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Header from '../components/Layout/Header';
 import Footer from '../components/Layout/Footer';
-import { useCarrito } from '../context/CarritoContext';
-import { useFavoritos } from '../context/FavoritosContext';
+import ProductCard from '../components/Catalog/ProductCard';
+import ProductDetailModal from '../components/Catalog/ProductDetailModal';
 import catalogoService from '../services/catalogo.service';
 import { Producto } from '../types/catalogo.types';
-import { getImagenProductoUrl, PLACEHOLDER_PRODUCTO } from '../config/api.config';
 import './HomePage.css';
 
 const HomePage: React.FC = () => {
   // Estados
   const [currentSlide, setCurrentSlide] = useState(0);
   const [productosDestacados, setProductosDestacados] = useState<Producto[]>([]);
-
-  const navigate = useNavigate();
-  const { agregarAlCarrito } = useCarrito();
-  const { toggleFavorito, esFavorito } = useFavoritos();
-
-  // Función para agregar al carrito y navegar
-  const handleAgregarAlCarrito = (producto: Producto) => {
-    agregarAlCarrito(producto);
-    // Guardar página de origen para botón "Seguir Comprando"
-    localStorage.setItem('origenCarrito', '/');
-    // Navegar al carrito
-    setTimeout(() => navigate('/carrito'), 300);
-  };
+  const [modalAbierto, setModalAbierto] = useState(false);
+  const [productoDetalle, setProductoDetalle] = useState<Producto | null>(null);
 
   // Slides del carrusel - Promociones destacadas
   const slides = [
@@ -71,9 +59,9 @@ const HomePage: React.FC = () => {
     const cargarDatos = async () => {
       try {
         console.log('🏠 HomePage: Cargando productos destacados...');
-        const response = await catalogoService.getProductos({ limite: 8, ordenarPor: 'popular' });
+        const response = await catalogoService.getProductos({ limite: 6, ordenarPor: 'popular' });
         
-        // ✅ El servicio ya normaliza la respuesta a ProductosResponse - limitado a 8 (2 filas de 4)
+        // ✅ El servicio ya normaliza la respuesta a ProductosResponse - limitado a 6 productos
         const productos = response?.productos || [];
         
         console.log('✅ Productos recibidos:', productos.length);
@@ -106,6 +94,11 @@ const HomePage: React.FC = () => {
   const prevSlide = useCallback(() => {
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
   }, [slides.length]);
+
+  const handleVerDetalle = (producto: Producto) => {
+    setProductoDetalle(producto);
+    setModalAbierto(true);
+  };
 
   // Datos fallback
   const getProductosFallback = (): Producto[] => [
@@ -233,13 +226,15 @@ const HomePage: React.FC = () => {
             <button className="carousel__button carousel__button--next" onClick={nextSlide} aria-label="Siguiente">
               <i className="fas fa-chevron-right"></i>
             </button>
-            <div className="carousel__nav">
+            <div className="carousel__nav" role="tablist" aria-label="Indicadores del carrusel">
               {slides.map((_, index) => (
                 <button
                   key={index}
                   className={`carousel__indicator ${index === currentSlide ? 'carousel__indicator--current' : ''}`}
                   onClick={() => setCurrentSlide(index)}
                   aria-label={`Ir a slide ${index + 1}`}
+                  role="tab"
+                  aria-selected={index === currentSlide}
                 />
               ))}
             </div>
@@ -286,58 +281,12 @@ const HomePage: React.FC = () => {
 
           <div className="products-grid">
             {(productosDestacados.length > 0 ? productosDestacados : getProductosFallback()).map((producto) => {
-              const tieneDescuento = producto.precio_regular && producto.precio_regular > producto.precio_venta;
-              const descuento = tieneDescuento
-                ? Math.round(((producto.precio_regular! - producto.precio_venta) / producto.precio_regular!) * 100)
-                : 0;
-
               return (
-                <article key={producto.id_producto} className="product-card">
-                  <div className="product-card__image">
-                    {tieneDescuento && (
-                      <span className="product-card__badge">-{descuento}%</span>
-                    )}
-                    <button
-                      className={`product-card__wishlist ${esFavorito(producto.id_producto) ? 'active' : ''}`}
-                      onClick={() => toggleFavorito(producto.id_producto)}
-                      aria-label={esFavorito(producto.id_producto) ? 'Quitar de favoritos' : 'Agregar a favoritos'}
-                      tabIndex={0}
-                    >
-                      <i className={esFavorito(producto.id_producto) ? 'fas fa-heart' : 'far fa-heart'} aria-hidden="true"></i>
-                    </button>
-                    <img
-                      src={getImagenProductoUrl(producto.imagen_url)}
-                      alt={producto.descripcion}
-                      loading="lazy"
-                      onError={(e) => {
-                        e.currentTarget.src = PLACEHOLDER_PRODUCTO;
-                      }}
-                    />
-                  </div>
-                  <div className="product-card__content">
-                    <span className="product-card__category">{producto.marca?.nombre}</span>
-                    <h3 className="product-card__title">{producto.descripcion}</h3>
-                    <p className="product-card__description">
-                      {producto.volumen}ml{producto.alcohol_vol ? ` • ${producto.alcohol_vol}%` : ''}
-                    </p>
-                    <div className="product-card__footer">
-                      <div className="product-card__price">
-                        ${Number(producto.precio_venta).toFixed(2)}
-                        {tieneDescuento && (
-                          <span className="product-card__price-old">${Number(producto.precio_regular).toFixed(2)}</span>
-                        )}
-                      </div>
-                      <button
-                        className="product-card__btn"
-                        onClick={() => handleAgregarAlCarrito(producto)}
-                        aria-label={`Agregar ${producto.descripcion} al carrito`}
-                        tabIndex={0}
-                      >
-                        Comprar
-                      </button>
-                    </div>
-                  </div>
-                </article>
+                <ProductCard
+                  key={producto.id_producto}
+                  producto={producto}
+                  onVerDetalle={() => handleVerDetalle(producto)}
+                />
               );
             })}
           </div>
@@ -345,6 +294,15 @@ const HomePage: React.FC = () => {
       </section>
 
       <Footer />
+
+      {/* Modal de detalle de producto */}
+      {modalAbierto && productoDetalle && (
+        <ProductDetailModal
+          isOpen={modalAbierto}
+          producto={productoDetalle}
+          onClose={() => setModalAbierto(false)}
+        />
+      )}
     </div>
   );
 };

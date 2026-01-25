@@ -137,7 +137,6 @@ const Login: React.FC = () => {
               placeholder="Ingresa tu usuario"
               disabled={loading}
               autoComplete="username"
-              tabIndex={1}
               aria-describedby={fieldErrors.usuario && touched.usuario ? "usuario-error" : undefined}
             />
             {usuario && !fieldErrors.usuario && (
@@ -170,7 +169,6 @@ const Login: React.FC = () => {
               placeholder="Ingresa tu contraseña"
               disabled={loading}
               autoComplete="current-password"
-              tabIndex={2}
               aria-describedby={fieldErrors.password && touched.password ? "password-error" : undefined}
             />
             <button
@@ -178,7 +176,6 @@ const Login: React.FC = () => {
               className="toggle-password-modern"
               onClick={() => setShowPassword(!showPassword)}
               aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
-              tabIndex={-1}
             >
               <i className={`fas fa-eye${showPassword ? '-slash' : ''}`}></i>
             </button>
